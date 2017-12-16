@@ -4,6 +4,9 @@ class Transaction < ApplicationRecord
   validates :ip_address, presence: true, :uniqueness => { :scope => [:date] }
   validates :date,       presence: true
   validates :value,      presence: true, numericality: true
+  default_scope -> { order(created_at: :desc) }
+  self.per_page = 10
+
 
   VALUE          = 0.01
   FROM_ZADDRESS  = ENV['KOTO_FROM_ZADDRESS']
