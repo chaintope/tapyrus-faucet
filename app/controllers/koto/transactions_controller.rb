@@ -5,7 +5,6 @@ class Koto::TransactionsController < ApplicationController
   end
 
   def create
-    puts 'create'
     @transaction = Transaction.new(transaction_params)
     @transaction.ip_address = ip_address
     @transaction.send!
