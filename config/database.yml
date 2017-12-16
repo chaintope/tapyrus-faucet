@@ -14,7 +14,7 @@ default: &default
   encoding: utf8
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: root
-  password:
+  password: <%= ENV['MYSQL_ROOT_PASSWORD'] %>
   socket: /tmp/mysql.sock
 
 development:
@@ -51,4 +51,4 @@ production:
   <<: *default
   database: koto-faucet_production
   username: koto-faucet
-  password: <%= ENV['KOTO-FAUCET_DATABASE_PASSWORD'] %>
+  password: <%= ENV['KOTO_FAUCET_DATABASE_PASSWORD'] %>
