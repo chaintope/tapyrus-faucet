@@ -5,20 +5,80 @@ application up and running.
 
 Things you may want to cover:
 
-* Ruby version
+# Ruby version
+- 2.4.2
 
-* System dependencies
+# System dependencies
+- MySQL
+- bundler
 
-* Configuration
+# Configuration
+## environment variables
+- RPC_USER
+- RPC_PASSWORD
+- RAKUTEN_AFFILIATEID
+- MYSQL_ROOT_PASSWORD (for development/test)
+- SECRET_KEY_BASE (for production)
+```
+$ bin/rails secret
+```
 
-* Database creation
+# Database creation
+## development/test
+```
+$ bin/rails db:create
+$ bin/rails db:migrate
+```
 
-* Database initialization
+## production
+- KOTO_FAUCET_DATABASE_PASSWORD
+- RAILS_SERVE_STATIC_FILES=1
 
-* How to run the test suite
+```
+$ mysql -uroot -p
+mysql> CREATE DATABASE `koto-faucet_production`;
+mysql> CREATE USER `koto`@localhost IDENTIFIED BY 'password';
+mysql> GRANT ALL PRIVILEGES ON `koto-faucet_production`.* TO `koto`@localhost IDENTIFIED BY 'password';
+mysql> FLUSH PRIVILEGES;
+mysql> exit
+$ RAILS_ENV=production bin/rails db:migrate
+$ RAILS_ENV=production bin/rails secret # => SECRET_KEY_BASE
+```
 
-* Services (job queues, cache servers, search engines, etc.)
+### リリースのたびに毎回
+```
+[ec2-user]
+$ sudo su - koto
+$ cd koto-faucet
 
-* Deployment instructions
+[koto]
+$ git pull
+$ RAILS_ENV=production bin/rails assets:precompile
+$ exit
 
-* ...
+
+[koto]
+$ source ~/.bashrc
+$ ps -ef | grep puma
+$ kill -9 pid
+$ cd koto-faucet
+$ nohup bin/rails server -e production -p 13333 &
+```
+
+
+
+# Database initialization
+
+# How to run the test suite
+
+```
+$ bin/rails test
+```
+
+# Services (job queues, cache servers, search engines, etc.)
+
+# Deployment instructions
+
+# いずれ書き足しておきたいこと
+- nginxの設定
+- sslのこと
