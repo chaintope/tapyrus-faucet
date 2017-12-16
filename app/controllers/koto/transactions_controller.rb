@@ -6,7 +6,7 @@ class Koto::TransactionsController < ApplicationController
 
   def create
     @transaction = Transaction.new(transaction_params)
-    @transaction.ip_address = ip_address
+    @transaction.ip_address = Rails.env.production? ? ip_address : Time.now.to_s
     @transaction.send!
     flash[:info] = 'Please check your wallet!'
     redirect_to koto_transactions_path

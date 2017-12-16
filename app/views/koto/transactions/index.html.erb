@@ -18,12 +18,14 @@
     <% if @transactions.present? %>
     <table class="table table-bordered table-striped">
       <tr>
+        <th>txid</th>
         <th>address</th>
         <th>value</th>
         <th>datetime</th>
       </tr>
       <% @transactions.each do |t| %>
       <tr>
+        <td><%= t.opid %></td>
         <td><%= t.address %></td>
         <td align="right"><%= t.value %></td>
         <td><%= t.created_at %></td>
