@@ -15,7 +15,6 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: root
   password: <%= ENV['MYSQL_ROOT_PASSWORD'] %>
-  socket: /tmp/mysql.sock
 
 development:
   <<: *default
@@ -50,5 +49,5 @@ test:
 production:
   <<: *default
   database: koto-faucet_production
-  username: koto-faucet
+  username: koto
   password: <%= ENV['KOTO_FAUCET_DATABASE_PASSWORD'] %>

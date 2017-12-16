@@ -16,6 +16,7 @@ Things you may want to cover:
 ## environment variables
 - RPC_USER
 - RPC_PASSWORD
+- KOTO_FROM_ZADDRESS
 - RAKUTEN_AFFILIATEID
 - MYSQL_ROOT_PASSWORD (for development/test)
 - SECRET_KEY_BASE (for production)
