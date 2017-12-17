@@ -8,7 +8,7 @@ class Transaction < ApplicationRecord
   self.per_page = 10
 
 
-  VALUE_ARY      = [0.01, 0.0123, 0.0114114, 0.00114114, 0.0029, 0.0039]
+  VALUE_ARY      = [0.01, 0.0123, 0.0114114, 0.00114114, 0.0029, 0.0039, 0.1114114]
   FROM_ZADDRESS  = ENV['KOTO_FROM_ZADDRESS']
   DONATE_ADDRESS = 'k16MSRriSxNq75Xo3k5Qy4nGnqR6nRhurHJ'
 
@@ -20,7 +20,7 @@ class Transaction < ApplicationRecord
 
   def send!
     self.date       = Time.zone.now.beginning_of_day
-    self.value      = VALUE_ARY.sample
+    self.value      = VALUE_ARY.sample * 10
 
     if self.address.blank?
       errors.add(:address, 'あなた様のアドレスが指定されておりません')
