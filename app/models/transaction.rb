@@ -32,7 +32,7 @@ class Transaction < ApplicationRecord
       raise
     end
 
-    if Transaction.find_by(address: self.ip_address, date: self.date)
+    if Transaction.find_by(ip_address: self.ip_address, date: self.date)
       errors.add(:date, '本日はご利用済です。明日のご利用を心よりお待ちいたしております。')
       raise
     end
