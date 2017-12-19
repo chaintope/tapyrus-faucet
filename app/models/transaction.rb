@@ -44,7 +44,7 @@ class Transaction < ApplicationRecord
 
     self.opid = RpcHelper.rpc(:sendtoaddress, self.address, value)
     if self.opid.blank?
-      errors.add(:opid, '申し訳ございません。sendtoaddressに失敗しました。少し時間をあけてから再度お試しください。解決しない場合はお手数おかけいたしまして申し訳ございませんが管理者までご連絡ください。https://askmona.org/user/6492')
+      errors.add(:opid, '申し訳ございません。sendtoaddressに失敗しました。少し時間をあけてから再度お試しください。解決しない場合はお手数おかけいたしまして申し訳ございませんが管理者までご連絡ください。')
       raise
     end
     save!
