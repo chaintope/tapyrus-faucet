@@ -8,7 +8,7 @@ class Transaction < ApplicationRecord
   self.per_page = 10
 
 
-  VALUE_ARY      = [0.01, 0.0123, 0.0114114, 0.00114114, 0.0029, 0.0039, 0.039, 0.1114114]
+  VALUE_ARY      = [0.1, 0.123, 0.114114, 0.0114114, 0.29, 0.029, 0.039, 0.39, 1.114114, 0.5]
   FROM_ZADDRESS  = ENV['KOTO_FROM_ZADDRESS']
   DONATE_ADDRESS = 'k16MSRriSxNq75Xo3k5Qy4nGnqR6nRhurHJ'
 
@@ -20,7 +20,7 @@ class Transaction < ApplicationRecord
 
   def send!
     self.date       = Time.zone.now.beginning_of_day
-    self.value      = VALUE_ARY.sample * 10
+    self.value      = VALUE_ARY.sample
 
     if self.address.blank?
       errors.add(:address, 'あなた様のアドレスが指定されておりません')
@@ -43,6 +43,10 @@ class Transaction < ApplicationRecord
     end
 
     self.opid = RpcHelper.rpc(:sendtoaddress, self.address, value)
+    if self.opid.blank?
+      errors.add(:opid, '申し訳ございません。sendtoaddressに失敗しました。少し時間をあけてから再度お試しください。解決しない場合はお手数おかけいたしまして申し訳ございませんが管理者までご連絡ください。https://askmona.org/user/6492')
+      raise
+    end
     save!
   end
 end
