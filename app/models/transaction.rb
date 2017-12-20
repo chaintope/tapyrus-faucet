@@ -8,7 +8,7 @@ class Transaction < ApplicationRecord
   self.per_page = 10
 
 
-  VALUE_ARY      = [0.1, 0.123, 0.114114, 0.0114114, 0.29, 0.029, 0.039, 0.39, 1.114114, 0.5]
+  VALUE_ARY      = [1, 1.123, 1.114114, 1.114114, 29, 2.9, 39, 3.9, 1.114114, 5, 10]
   VALUE_ARY2     = [0.01, 0.0123, 0.0114114, 0.00114114, 0.029, 0.0029, 0.0039, 0.039, 0.05]
   FROM_ZADDRESS  = ENV['KOTO_FROM_ZADDRESS']
   DONATE_ADDRESS = 'k16MSRriSxNq75Xo3k5Qy4nGnqR6nRhurHJ'
