@@ -9,6 +9,7 @@ class Transaction < ApplicationRecord
 
 
   VALUE_ARY      = [0.1, 0.123, 0.114114, 0.0114114, 0.29, 0.029, 0.039, 0.39, 1.114114, 0.5]
+  VALUE_ARY2     = [0.01, 0.0123, 0.0114114, 0.00114114, 0.029, 0.0029, 0.0039, 0.039, 0.05]
   FROM_ZADDRESS  = ENV['KOTO_FROM_ZADDRESS']
   DONATE_ADDRESS = 'k16MSRriSxNq75Xo3k5Qy4nGnqR6nRhurHJ'
 
@@ -19,8 +20,10 @@ class Transaction < ApplicationRecord
   end
 
   def send!
+    current_balance = Transaction.balance
+
     self.date       = Time.zone.now.beginning_of_day
-    self.value      = VALUE_ARY.sample
+    self.value      = current_balance > 10 ? VALUE_ARY.sample : VALUE_ARY2.sample
 
     if self.address.blank?
       errors.add(:address, 'あなた様のアドレスが指定されておりません')
@@ -37,7 +40,7 @@ class Transaction < ApplicationRecord
       raise
     end
 
-    if Transaction.balance < ( self.value + 0.04 )
+    if current_balance < ( self.value + 0.04 )
       errors.add(:value, '申し訳ございません。力尽きましたでございます。')
       raise
     end
