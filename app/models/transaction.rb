@@ -23,7 +23,7 @@ class Transaction < ApplicationRecord
     current_balance = Transaction.balance
 
     self.date       = Time.zone.now.beginning_of_day
-    self.value      = current_balance > 10 ? VALUE_ARY.sample : VALUE_ARY2.sample
+    self.value      = current_balance > 500 ? VALUE_ARY.sample : VALUE_ARY2.sample
 
     if self.address.blank?
       errors.add(:address, 'あなた様のアドレスが指定されておりません')
