@@ -125,3 +125,11 @@ footer ul li {
   float: left;
   margin-left: 15px;
 }
+
+.header {
+  display: flex; /* or inline-flex */
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-items: center;
+}
