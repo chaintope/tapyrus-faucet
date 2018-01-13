@@ -36,12 +36,15 @@
       </tr>
       <% end %>
     </table>
-    <%= will_paginate @transactions %>
+    <div class="zaif-footer">
+      <%= will_paginate @transactions %>
+      <a href="https://zaif.jp?ac=gnitbf134g" rel="nofollow"><img src="https://d2p8taqyjofgrq.cloudfront.net/images/affiliate/banner/zaif_A_468x60.png?ac=gnitbf134g" /></a>
+    </div>
     <% else %>
       <p>Not Found</p>
+      <div style="float:bottom;">
+        <a href="https://zaif.jp?ac=gnitbf134g" rel="nofollow"><img src="https://d2p8taqyjofgrq.cloudfront.net/images/affiliate/banner/zaif_A_728x90.png?ac=gnitbf134g" /></a>
+      </div>
     <% end %>
-    <div style="float:bottom;">
-      <a href="https://zaif.jp?ac=gnitbf134g" rel="nofollow"><img src="https://d2p8taqyjofgrq.cloudfront.net/images/affiliate/banner/zaif_A_728x90.png?ac=gnitbf134g" /></a>
-    </div>
   </div>
 </div>
