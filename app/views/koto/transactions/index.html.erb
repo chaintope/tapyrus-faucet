@@ -5,12 +5,16 @@
 </div>
 
 <div class="row">
-  <aside class="col-md-2">
+  <aside class="col-md-3">
     <section class="send_to_address_form">
       <%= form_for([:koto, @transaction]) do |f| %>
         <%= render 'shared/error_messages' %>
         <%= f.label :address %>
         <%= f.text_field :address, class: 'form-control' %>
+        <p />
+        <%= recaptcha_tags %>
+        <p />
+        <p />
         <%= f.submit "Send", class: "btn btn-primary" %>
       <% end %>
       <p>Kotoを少量ではありますがさしあげます。</p>
@@ -18,7 +22,7 @@
       <span class="text-info"><%= Transaction.balance %> koto</span>
     </section>
   </aside>
-  <div class="col-md-10">
+  <div class="col-md-9">
     <% if @transactions.present? %>
     <table class="table table-bordered table-striped">
       <tr>
