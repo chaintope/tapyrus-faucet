@@ -9,23 +9,22 @@ medi-8の広告を導入したときからページネーションが動作し�
 will_paginateバージョンアップとかしたら問題でるかもしれない。
 =end
 
-module WillPaginate
-  module ViewHelpers
-    class LinkRenderer
-      alias tag_original tag
+module Torifuku
+end
 
-      def tag(name, value, attributes = {})
-        result = tag_original(name, value, attributes)
-        m = /\A(<a href="\/koto\?page=\d+")(>.+)$/.match(result)
-        m = /\A(<a rel="next" href="\/koto\?page=\d+")(>.+)$/.match(result) unless m
-        m = /\A(<a rel="prev" href="\/koto\?page=\d+")(>.+)$/.match(result) unless m
-        m = /\A(<a href="#")(>.+)$/.match(result) unless m
-        if m
-          result = "#{m[1]} target=\"_self\"#{m[2]}"
-        end
-
-        result
-      end
+module Torifuku::WillPaginateExt
+  def tag(name, value, attributes = {})
+    result = super(name, value, attributes)
+    m = /\A(<a href="\/koto\?page=\d+")(>.+)$/.match(result)
+    m = /\A(<a rel="next" href="\/koto\?page=\d+")(>.+)$/.match(result) unless m
+    m = /\A(<a rel="prev" href="\/koto\?page=\d+")(>.+)$/.match(result) unless m
+    m = /\A(<a href="#")(>.+)$/.match(result) unless m
+    if m
+      result = "#{m[1]} target=\"_self\"#{m[2]}"
     end
+
+    result
   end
 end
+
+WillPaginate::ViewHelpers::LinkRenderer.prepend(Torifuku::WillPaginateExt)

@@ -49,6 +49,7 @@ GEM
       sass (>= 3.3.4)
     bootstrap-will_paginate (1.0.0)
       will_paginate
+    brakeman (4.1.1)
     builder (3.2.3)
     bullet (5.7.0)
       activesupport (>= 3.0.0)
@@ -189,6 +190,7 @@ PLATFORMS
 DEPENDENCIES
   bootstrap-sass (= 3.3.7)
   bootstrap-will_paginate (= 1.0.0)
+  brakeman
   bullet
   byebug
   capybara (~> 2.13)
