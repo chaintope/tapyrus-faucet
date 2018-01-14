@@ -57,6 +57,17 @@ $ git pull
 $ RAILS_ENV=production bin/rails assets:precompile
 $ exit
 
+[ec2-user]
+$ sudo su -
+
+[root]
+$ cd /srv/www
+$ cp -r /home/koto/koto-faucet/public .
+$ chown -R nginx public/
+$ exit
+
+[ec2-user]
+$ sudo su - koto
 
 [koto]
 $ source ~/.bashrc
