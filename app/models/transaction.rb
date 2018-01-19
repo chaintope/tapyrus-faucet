@@ -5,7 +5,7 @@ class Transaction < ApplicationRecord
   validates :date,       presence: true
   validates :value,      presence: true, numericality: true
   default_scope -> { order(created_at: :desc) }
-  self.per_page = 10
+  self.per_page = 20
 
 
   VALUE_ARY      = ([3.9] * 100) + [39]
