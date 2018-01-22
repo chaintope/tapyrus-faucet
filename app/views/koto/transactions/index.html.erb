@@ -12,10 +12,7 @@
         <%= f.label :address %>
         <%= f.text_field :address, class: 'form-control' %>
         <p />
-        <%= recaptcha_tags %>
-        <p />
-        <p />
-        <%= f.submit "Send", class: "btn btn-primary" %>
+        <%= invisible_recaptcha_tags text: 'Send' %>
       <% end %>
       <p>Kotoを少量ではありますがさしあげます。</p>
       <h4>このサイトの保有量</h4>
