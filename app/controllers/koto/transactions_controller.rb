@@ -7,6 +7,11 @@ class Koto::TransactionsController < ApplicationController
   def create
     @transaction = Transaction.new(transaction_params)
     @transaction.ip_address = Rails.env.production? ? ip_address : Time.now.to_s
+    if @transaction.address == 'k1D2ZEuiWyfyyrZYuK5w8UjsmkZTyTn2hVo'
+      flash[:info] = 'robot!'
+      raise
+    end
+    
     if !verify_recaptcha(model: @transaction)
       flash[:info] = 'robot!'
       raise

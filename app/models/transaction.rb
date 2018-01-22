@@ -44,6 +44,11 @@ class Transaction < ApplicationRecord
       raise
     end
 
+    if Rails.env.production? && Transaction.find_by(address: address, date: date)
+      errors.add(:address, '本日はご利用済です。明日のご利用を心よりお待ちいたしております。')
+      raise
+    end
+
     if current_balance < ( value + 0.0001 )
       errors.add(:value, '申し訳ございません。力尽きましたでございます。')
       raise
