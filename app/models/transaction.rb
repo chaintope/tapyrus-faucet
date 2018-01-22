@@ -23,33 +23,48 @@ class Transaction < ApplicationRecord
     current_balance = Transaction.balance
 
     self.date       = Time.zone.now.beginning_of_day
-    self.value      = current_balance > 500 ? VALUE_ARY.sample : VALUE_ARY2.sample
+    self.value      = dist_value_ary(current_balance).sample
 
-    if self.address.blank?
+    if value.nil? || value.zero?
+      self.value = 0.0003
+    end
+
+    if address.blank?
       errors.add(:address, 'あなた様のアドレスが指定されておりません')
       raise
     end
 
-    unless RpcHelper.rpc(:validateaddress, self.address)['isvalid']
+    unless RpcHelper.rpc(:validateaddress, address)['isvalid']
       errors.add(:address, 'アドレスに誤りがございます')
       raise
     end
 
-    if Transaction.find_by(ip_address: self.ip_address, date: self.date)
+    if Transaction.find_by(ip_address: ip_address, date: date)
       errors.add(:date, '本日はご利用済です。明日のご利用を心よりお待ちいたしております。')
       raise
     end
 
-    if current_balance < ( self.value + 0.04 )
+    if current_balance < ( value + 0.0001 )
       errors.add(:value, '申し訳ございません。力尽きましたでございます。')
       raise
     end
 
-    self.opid = RpcHelper.rpc(:sendtoaddress, self.address, value)
-    if self.opid.blank?
+    self.opid = RpcHelper.rpc(:sendtoaddress, address, value)
+    if opid.blank?
       errors.add(:opid, '申し訳ございません。sendtoaddressに失敗しました。少し時間をあけてから再度お試しください。解決しない場合はお手数おかけいたしまして申し訳ございませんが管理者までご連絡ください。')
       raise
     end
     save!
+  end
+
+  def dist_value_ary(balance)
+    case balance
+    when 0.00000001...400
+      1000.times.map { Random.rand(0.0003).round(7) }.reject { |v| v < 0.0002 }
+    when 400...500
+      VALUE_ARY2
+    else
+      VALUE_ARY
+    end
   end
 end
