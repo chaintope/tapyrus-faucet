@@ -14,10 +14,12 @@ Things you may want to cover:
 
 # Configuration
 ## environment variables
-- RPC_USER
-- RPC_PASSWORD
+- KOTO_RPC_USER
+- KOTO_RPC_PASSWORD
 - KOTO_FROM_ZADDRESS
 - RAKUTEN_AFFILIATEID
+- RECAPTCHA_SITE_KEY
+- RECAPTCHA_SECRET_KEY
 - MYSQL_ROOT_PASSWORD (for development/test)
 - SECRET_KEY_BASE (for production)
 ```
@@ -94,3 +96,9 @@ $ bin/rails test
 # いずれ書き足しておきたいこと
 - nginxの設定
 - sslのこと
+
+# 日別集計
+
+```
+mysql> SELECT DATE_FORMAT(date, '%Y-%m-%d') AS time, COUNT(*), SUM(value) AS SUM, SUM(value)/COUNT(*) AS AVE FROM `koto-faucet_production`.transactions GROUP BY date;
+```
