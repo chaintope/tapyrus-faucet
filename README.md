@@ -94,3 +94,9 @@ $ bin/rails test
 # いずれ書き足しておきたいこと
 - nginxの設定
 - sslのこと
+
+# 日別集計
+
+```
+mysql> SELECT DATE_FORMAT(date, '%Y-%m-%d') AS time, COUNT(*), SUM(value) AS SUM FROM `koto-faucet_production`.transactions GROUP BY date;
+```
