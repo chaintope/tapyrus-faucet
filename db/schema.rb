@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180122133749) do
+ActiveRecord::Schema.define(version: 20180131133959) do
 
   create_table "transactions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "opid", null: false
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 20180122133749) do
     t.datetime "updated_at", null: false
     t.index ["address", "date"], name: "index_transactions_on_address_and_date"
     t.index ["created_at"], name: "index_transactions_on_created_at"
+    t.index ["date"], name: "index_transactions_on_date"
     t.index ["ip_address", "date"], name: "index_transactions_on_ip_address_and_date", unique: true
   end
 
