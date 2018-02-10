@@ -7,15 +7,16 @@ class Transaction < ApplicationRecord
   default_scope -> { order(created_at: :desc) }
   self.per_page = 20
 
-
-  VALUE_ARY      = ([3.9] * 100) + [39]
-  VALUE_ARY2     = [0.01, 0.0123, 0.0114114, 0.00114114, 0.029, 0.0029, 0.0039, 0.039, 0.05]
-  FROM_ZADDRESS  = ENV['KOTO_FROM_ZADDRESS']
-  DONATE_ADDRESS = 'k16MSRriSxNq75Xo3k5Qy4nGnqR6nRhurHJ'
+  VALUE = 0.001
+  FEE = 0.001
 
   class << self
     def balance
       RpcHelper.rpc(:getbalance)
+    end
+
+    def monacoin_address
+      RpcHelper.rpc(:getaddressesbyaccount, '').first
     end
   end
 
@@ -23,11 +24,7 @@ class Transaction < ApplicationRecord
     current_balance = Transaction.balance
 
     self.date       = Time.zone.now.beginning_of_day
-    self.value      = dist_value_ary(current_balance).sample
-
-    if value.nil? || value.zero?
-      self.value = 0.0003
-    end
+    self.value      = VALUE
 
     if address.blank?
       errors.add(:address, 'あなた様のアドレスが指定されておりません')
@@ -44,12 +41,12 @@ class Transaction < ApplicationRecord
       raise
     end
 
-    if address != 'k19Jtp5NDJcj4pCQoeTEgksLWp9HW9qKuqJ' && Transaction.find_by(address: address, date: date)
+    if address != 'MPg3hUaCLfXXDQdf7nYZMesovc9tcoFzKk' && Transaction.find_by(address: address, date: date)
       errors.add(:address, '本日はご利用済です。明日のご利用を心よりお待ちいたしております。')
       raise
     end
 
-    if current_balance < ( value + 0.0001 )
+    if current_balance < ( value + FEE )
       errors.add(:value, '申し訳ございません。力尽きましたでございます。')
       raise
     end
@@ -60,16 +57,5 @@ class Transaction < ApplicationRecord
       raise
     end
     save!
-  end
-
-  def dist_value_ary(balance)
-    case balance
-    when 0.00000001...400
-      1000.times.map { Random.rand(0.0003).round(7) }.reject { |v| v < 0.0002 }
-    when 400...500
-      VALUE_ARY2
-    else
-      VALUE_ARY
-    end
   end
 end

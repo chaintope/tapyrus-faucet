@@ -2,10 +2,10 @@ require 'net/http'
 require 'json'
 
 module RpcHelper
-  RPC_USER = ENV['KOTO_RPC_USER']
-  RPC_PASSWORD = ENV['KOTO_RPC_PASSWORD']
+  RPC_USER = ENV['MONACOIN_MAIN_FAUCET_RPC_USER']
+  RPC_PASSWORD = ENV['MONACOIN_MAIN_FAUCET_RPC_PASSWORD']
   HOST = Rails.env.production? ? 'localhost' : '192.168.1.12'
-  PORT = 8432
+  PORT = Rails.env.production? ? 9402 : 19402
 
   class << self
     def rpc(method, *params)

@@ -7,4 +7,4 @@ test:
 production:
   adapter: redis
   url: redis://localhost:6379/1
-  channel_prefix: koto-faucet_production
+  channel_prefix: monacoin-main-faucet_production

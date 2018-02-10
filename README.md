@@ -14,9 +14,8 @@ Things you may want to cover:
 
 # Configuration
 ## environment variables
-- KOTO_RPC_USER
-- KOTO_RPC_PASSWORD
-- KOTO_FROM_ZADDRESS
+- MONACOIN_MAIN_FAUCET_RPC_USER
+- MONACOIN_MAIN_FAUCET_RPC_PASSWORD
 - RAKUTEN_AFFILIATEID
 - RECAPTCHA_SITE_KEY
 - RECAPTCHA_SECRET_KEY
@@ -34,16 +33,17 @@ $ bin/rails db:migrate
 ```
 
 ## production
-- KOTO_FAUCET_DATABASE_PASSWORD
+- MONACOIN_MAIN_FAUCET_DATABASE_PASSWORD
 - RAILS_SERVE_STATIC_FILES=1
 
 ```
 $ mysql -uroot -p
-mysql> CREATE DATABASE `koto-faucet_production`;
-mysql> CREATE USER `koto`@localhost IDENTIFIED BY 'password';
-mysql> GRANT ALL PRIVILEGES ON `koto-faucet_production`.* TO `koto`@localhost IDENTIFIED BY 'password';
+# mysql> CREATE DATABASE `monacoin-main-faucet_production`;
+mysql> CREATE USER `monacoin-main-faucet`@localhost IDENTIFIED BY 'password';
+mysql> GRANT ALL PRIVILEGES ON `monacoin-main-faucet_production`.* TO `monacoin-main-faucet`@localhost IDENTIFIED BY 'password';
 mysql> FLUSH PRIVILEGES;
 mysql> exit
+$ RAILS_ENV=production bin/rails db:create
 $ RAILS_ENV=production bin/rails db:migrate
 $ RAILS_ENV=production bin/rails secret # => SECRET_KEY_BASE
 ```
@@ -51,10 +51,10 @@ $ RAILS_ENV=production bin/rails secret # => SECRET_KEY_BASE
 ### リリースのたびに毎回
 ```
 [ec2-user]
-$ sudo su - koto
-$ cd koto-faucet
+$ sudo su - monacoin
+$ cd monacoin-main-faucet
 
-[koto]
+[monacoin]
 $ git pull
 $ RAILS_ENV=production bin/rails assets:precompile
 $ exit
@@ -64,19 +64,19 @@ $ sudo su -
 
 [root]
 $ cd /srv/www
-$ cp -r /home/koto/koto-faucet/public .
+$ cp -r /home/monacoin/monacoin-main-faucet/public .
 $ chown -R nginx public/
 $ exit
 
 [ec2-user]
-$ sudo su - koto
+$ sudo su - monacoin
 
-[koto]
+[monacoin]
 $ source ~/.bashrc
 $ ps -ef | grep puma
 $ kill -9 pid
-$ cd koto-faucet
-$ nohup bin/rails server -e production -p 13333 &
+$ cd monacoin-main-faucet
+$ nohup bin/rails server -e production -p 23333 &
 ```
 
 
@@ -100,5 +100,5 @@ $ bin/rails test
 # 日別集計
 
 ```
-mysql> SELECT DATE_FORMAT(date, '%Y-%m-%d') AS time, COUNT(*), SUM(value) AS SUM, SUM(value)/COUNT(*) AS AVE FROM `koto-faucet_production`.transactions GROUP BY date;
+mysql> SELECT DATE_FORMAT(date, '%Y-%m-%d') AS time, COUNT(*), SUM(value) AS SUM, SUM(value)/COUNT(*) AS AVE FROM `monacoin-main-faucet_production`.transactions GROUP BY date;
 ```

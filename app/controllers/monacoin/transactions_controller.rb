@@ -1,6 +1,6 @@
 require 'open-uri'
 require 'timeout'
-class Koto::TransactionsController < ApplicationController
+class Monacoin::TransactionsController < ApplicationController
 
   BLACK_LIST = %w(
     123.27.226.137
@@ -51,7 +51,8 @@ class Koto::TransactionsController < ApplicationController
   def index
     @transactions = Transaction.paginate(:page => params[:page])
     @transaction = Transaction.new
-    @askmona_url = askmona_url
+    @wallet_address = Transaction.monacoin_address
+    @donate_to = donate_to
   end
 
   def create
@@ -60,13 +61,13 @@ class Koto::TransactionsController < ApplicationController
     if @transaction.address == 'k1D2ZEuiWyfyyrZYuK5w8UjsmkZTyTn2hVo'
       # スパム野郎が攻撃に成功したとおもわせる
       flash[:info] = 'Please check your wallet!'
-      redirect_to koto_transactions_path
+      redirect_to monacoin_transactions_path
       return
     end
     if BLACK_LIST.include?(@transaction.ip_address)
       # スパム野郎が攻撃に成功したとおもわせる
       flash[:info] = 'Please check your wallet!'
-      redirect_to koto_transactions_path
+      redirect_to monacoin_transactions_path
       return
     end
 
@@ -77,7 +78,7 @@ class Koto::TransactionsController < ApplicationController
 
     @transaction.send!
     flash[:info] = 'Please check your wallet!'
-    redirect_to koto_transactions_path
+    redirect_to monacoin_transactions_path
   rescue => e
     @transactions = Transaction.paginate(:page => params[:page])
     render :index
@@ -99,11 +100,13 @@ class Koto::TransactionsController < ApplicationController
       remoteaddr
     end
 
-    def askmona_url
+    def donate_to
       Timeout.timeout(3) do
-        open('https://firebase.torifuku-kaiou.tokyo/koto_askmona_url.txt', &:read)
+        open('https://firebase.torifuku-kaiou.tokyo/monacoin-address') do |f|
+          f.read.split("\n").first
+        end
       end
     rescue Timeout::Error
-      'https://askmona.org/9527'
+      'MLvtg6u9EF32zqpVKXdWv5vcyNbeYrWuVT'
     end
 end
