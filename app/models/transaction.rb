@@ -55,7 +55,7 @@ class Transaction < ApplicationRecord
 
     sum_unspents = -> (unspents) { unspents.sum { |u| u['amount'] } }
 
-    unspents = RpcHelper.rpc(:listunspent).reduce([]) do |memo_ary, unspent|
+    unspents = RpcHelper.rpc(:listunspent, 0).reduce([]) do |memo_ary, unspent|
       break memo_ary if sum_unspents.call(memo_ary) >= 0.002
       memo_ary << unspent
     end
