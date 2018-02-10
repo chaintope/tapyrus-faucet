@@ -1,3 +1,5 @@
+require 'open-uri'
+require 'timeout'
 class Koto::TransactionsController < ApplicationController
 
   BLACK_LIST = %w(
@@ -49,6 +51,7 @@ class Koto::TransactionsController < ApplicationController
   def index
     @transactions = Transaction.paginate(:page => params[:page])
     @transaction = Transaction.new
+    @askmona_url = askmona_url
   end
 
   def create
@@ -94,5 +97,13 @@ class Koto::TransactionsController < ApplicationController
       end
 
       remoteaddr
+    end
+
+    def askmona_url
+      Timeout.timeout(3) do
+        open('https://firebase.torifuku-kaiou.tokyo/koto_askmona_url.txt', &:read)
+      end
+    rescue Timeout::Error
+      'https://askmona.org/9527'
     end
 end
