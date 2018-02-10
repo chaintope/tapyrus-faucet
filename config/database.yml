@@ -49,5 +49,5 @@ test:
 production:
   <<: *default
   database: monacoin-main-faucet_production
-  username: monacoin-main-faucet
+  username: mona-main-faucet
   password: <%= ENV['MONACOIN_MAIN_FAUCET_DATABASE_PASSWORD'] %>

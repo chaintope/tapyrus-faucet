@@ -39,8 +39,8 @@ $ bin/rails db:migrate
 ```
 $ mysql -uroot -p
 # mysql> CREATE DATABASE `monacoin-main-faucet_production`;
-mysql> CREATE USER `monacoin-main-faucet`@localhost IDENTIFIED BY 'password';
-mysql> GRANT ALL PRIVILEGES ON `monacoin-main-faucet_production`.* TO `monacoin-main-faucet`@localhost IDENTIFIED BY 'password';
+mysql> CREATE USER `mona-main-faucet`@localhost IDENTIFIED BY 'password';
+mysql> GRANT ALL PRIVILEGES ON `monacoin-main-faucet_production`.* TO `mona-main-faucet`@localhost IDENTIFIED BY 'password';
 mysql> FLUSH PRIVILEGES;
 mysql> exit
 $ RAILS_ENV=production bin/rails db:create
