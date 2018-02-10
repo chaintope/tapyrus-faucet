@@ -51,9 +51,44 @@ class Transaction < ApplicationRecord
       raise
     end
 
-    self.txid = RpcHelper.rpc(:sendtoaddress, address, value)
+    # コマンドをRubyで書いている感じ
+
+    sum_unspents = -> (unspents) { unspents.sum { |u| u['amount'] } }
+
+    unspents = RpcHelper.rpc(:listunspent).reduce([]) do |memo_ary, unspent|
+      break memo_ary if sum_unspents.call(memo_ary) >= 0.002
+      memo_ary << unspent
+    end
+
+    sum = sum_unspents.call(unspents)
+    unless sum >= 0.002
+      errors.add(:value, '申し訳ございません。力尽きましたでございます。')
+      raise
+    end
+
+    inputs = unspents.map do |u|
+      {
+        "txid" => u["txid"],
+        "vout" => u["vout"]
+      }
+    end
+
+    outputs = {}
+    wallet_address = RpcHelper.rpc(:getnewaddress, '')
+    outputs[wallet_address] = (sum - VALUE - FEE).round(8, half: :down)
+    outputs[address] = VALUE
+
+    hexstring = RpcHelper.rpc(:createrawtransaction, inputs, outputs)
+    signed_result = RpcHelper.rpc(:signrawtransaction, hexstring)
+
+    unless signed_result['complete']
+      errors.add(:value, '署名失敗')
+      raise
+    end
+
+    self.txid = RpcHelper.rpc(:sendrawtransaction, signed_result['hex'])
     if txid.blank?
-      errors.add(:txid, '申し訳ございません。sendtoaddressに失敗しました。少し時間をあけてから再度お試しください。解決しない場合はお手数おかけいたしまして申し訳ございませんが管理者までご連絡ください。')
+      errors.add(:txid, '申し訳ございません。sendrawtransactionに失敗しました。少し時間をあけてから再度お試しください。解決しない場合はお手数おかけいたしまして申し訳ございませんが管理者までご連絡ください。')
       raise
     end
     save!

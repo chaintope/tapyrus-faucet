@@ -80,6 +80,7 @@ class Monacoin::TransactionsController < ApplicationController
     flash[:info] = 'Please check your wallet!'
     redirect_to monacoin_transactions_path
   rescue => e
+    @transaction.errors.add(:value, 'Failed')
     @transactions = Transaction.paginate(:page => params[:page])
     render :index
   end
