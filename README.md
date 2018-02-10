@@ -72,7 +72,7 @@ $ exit
 $ sudo su - monacoin
 
 [monacoin]
-$ source ~/.bashrc
+$ source ~/.bash_profile
 $ ps -ef | grep puma
 $ kill -9 pid
 $ cd monacoin-main-faucet
