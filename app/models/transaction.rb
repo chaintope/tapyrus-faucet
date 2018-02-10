@@ -75,7 +75,8 @@ class Transaction < ApplicationRecord
 
     outputs = {}
     wallet_address = RpcHelper.rpc(:getnewaddress, '')
-    outputs[wallet_address] = (sum - VALUE - FEE).round(8, half: :down)
+    charge = (sum - VALUE - FEE)
+    outputs[wallet_address] = BigDecimal.new(charge.to_s).floor(8).to_f
     outputs[address] = VALUE
 
     hexstring = RpcHelper.rpc(:createrawtransaction, inputs, outputs)
