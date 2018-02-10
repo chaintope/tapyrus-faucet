@@ -134,6 +134,14 @@ footer ul li {
   align-items: center;
 }
 
+.footer-ad {
+  display: flex; /* or inline-flex */
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
 .zaif-footer {
   display: flex; /* or inline-flex */
   flex-direction: row;

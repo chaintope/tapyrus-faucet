@@ -1,16 +1,15 @@
 <footer class="footer">
+
+
+  <div class="footer-ad">
+    <!-- Rakuten Widget FROM HERE --><script type="text/javascript">rakuten_design="slide";rakuten_affiliateId="<%= ENV['RAKUTEN_AFFILIATEID'] %>";rakuten_items="ctsmatch";rakuten_genreId=0;rakuten_size="600x200";rakuten_target="_blank";rakuten_theme="gray";rakuten_border="off";rakuten_auto_mode="off";rakuten_genre_title="off";rakuten_recommend="on";</script><script src="https://xml.affiliate.rakuten.co.jp/widget/js/rakuten_widget.js" type="text/javascript"></script><!-- Rakuten Widget TO HERE-->
+    <!-- footer ad -->
+  </div>
+
   <nav>
     <ul>
-      <li>寄付はこちらまで => <span class="text-info"><%= Transaction::DONATE_ADDRESS %></span> (このサイトから配布させていただきます)</li><br />
-      <li>寄付はこちらまで => <a href="https://askmona.org/user/6492" target="_blank">Ask Mona</a> (サーバの維持費に使わせていただきます)</li>
+      <li>寄付はこちらまで => <span class="text-info"><%= @wallet_address %></span> (このサイトから配布させていただきます たくさんいただけたら私のフトコロにいれますです)</li><br />
+      <li>寄付はこちらまで => <span class="text-info"><%= @donate_to %></span> (サーバの維持費に使わせていただきます)</li>
     </ul>
   </nav>
-
-  <div style="float:left;">
-    <!-- Rakuten Widget FROM HERE --><script type="text/javascript">rakuten_design="slide";rakuten_affiliateId="<%= ENV['RAKUTEN_AFFILIATEID'] %>";rakuten_items="ctsmatch";rakuten_genreId=0;rakuten_size="600x200";rakuten_target="_blank";rakuten_theme="gray";rakuten_border="off";rakuten_auto_mode="off";rakuten_genre_title="off";rakuten_recommend="on";</script><script src="https://xml.affiliate.rakuten.co.jp/widget/js/rakuten_widget.js" type="text/javascript"></script><!-- Rakuten Widget TO HERE-->
-  </div>
-  <a href="https://px.a8.net/svt/ejp?a8mat=2BLJLC+DA33JM+50+2HB8GH" target="_blank" rel="nofollow">
-<img border="0" width="468" height="60" alt="" src="https://www29.a8.net/svt/bgt?aid=140413296803&wid=001&eno=01&mid=s00000000018015001000&mc=1"></a>
-<img border="0" width="1" height="1" src="https://www14.a8.net/0.gif?a8mat=2BLJLC+DA33JM+50+2HB8GH" alt="">
-  <iframe src="//rcm-fe.amazon-adsystem.com/e/cm?t=a8-affi-283466-22&o=9&p=48&l=ur1&category=amazonrotate&f=ifr" width=728 height=90 scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe> <img border="0" width="1" height="1" src="//www12.a8.net/0.gif?a8mat=2BLJLC+D5X3UQ+249K+BWGDT" alt="">
 </footer>
