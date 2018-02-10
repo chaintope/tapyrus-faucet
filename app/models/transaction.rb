@@ -8,7 +8,7 @@ class Transaction < ApplicationRecord
   self.per_page = 20
 
   VALUE = 0.001
-  FEE = 0.001
+  FEE =   0.00023
 
   class << self
     def balance
@@ -56,12 +56,12 @@ class Transaction < ApplicationRecord
     sum_unspents = -> (unspents) { unspents.sum { |u| u['amount'] } }
 
     unspents = RpcHelper.rpc(:listunspent, 0).reduce([]) do |memo_ary, unspent|
-      break memo_ary if sum_unspents.call(memo_ary) >= 0.002
+      break memo_ary if sum_unspents.call(memo_ary) >= (VALUE + FEE)
       memo_ary << unspent
     end
 
     sum = sum_unspents.call(unspents)
-    unless sum >= 0.002
+    unless sum >= (VALUE + FEE)
       errors.add(:value, '申し訳ございません。力尽きましたでございます。')
       raise
     end
@@ -76,7 +76,9 @@ class Transaction < ApplicationRecord
     outputs = {}
     wallet_address = RpcHelper.rpc(:getnewaddress, '')
     charge = (sum - VALUE - FEE)
-    outputs[wallet_address] = BigDecimal.new(charge.to_s).floor(8).to_f
+    unless BigDecimal.new(charge.to_s).floor(8).to_f == 0.0
+      outputs[wallet_address] = BigDecimal.new(charge.to_s).floor(8).to_f
+    end
     outputs[address] = VALUE
 
     hexstring = RpcHelper.rpc(:createrawtransaction, inputs, outputs)
