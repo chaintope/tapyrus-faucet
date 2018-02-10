@@ -1,5 +1,5 @@
 class Transaction < ApplicationRecord
-  validates :opid,       presence: true
+  validates :txid,       presence: true
   validates :address,    presence: true
   validates :ip_address, presence: true, :uniqueness => { :scope => [:date] }
   validates :date,       presence: true
@@ -51,9 +51,9 @@ class Transaction < ApplicationRecord
       raise
     end
 
-    self.opid = RpcHelper.rpc(:sendtoaddress, address, value)
-    if opid.blank?
-      errors.add(:opid, '申し訳ございません。sendtoaddressに失敗しました。少し時間をあけてから再度お試しください。解決しない場合はお手数おかけいたしまして申し訳ございませんが管理者までご連絡ください。')
+    self.txid = RpcHelper.rpc(:sendtoaddress, address, value)
+    if txid.blank?
+      errors.add(:txid, '申し訳ございません。sendtoaddressに失敗しました。少し時間をあけてから再度お試しください。解決しない場合はお手数おかけいたしまして申し訳ございませんが管理者までご連絡ください。')
       raise
     end
     save!

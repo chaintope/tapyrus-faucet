@@ -10,10 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180131133959) do
+ActiveRecord::Schema.define(version: 20180210110306) do
 
   create_table "transactions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string "opid", null: false
+    t.string "txid", null: false
     t.string "address", null: false
     t.string "ip_address", null: false
     t.date "date", null: false
