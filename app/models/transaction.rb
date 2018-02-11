@@ -8,7 +8,7 @@ class Transaction < ApplicationRecord
   self.per_page = 20
 
   VALUE = 0.001
-  FEE =   0.00023
+  FEE =   0.001 # Set the transaction fee per kB. Overwrites the paytxfee parameter.
 
   class << self
     def balance
@@ -46,52 +46,14 @@ class Transaction < ApplicationRecord
       raise
     end
 
-    if current_balance < ( value + FEE )
-      errors.add(:value, '申し訳ございません。力尽きましたでございます。')
+    unless RpcHelper.rpc(:settxfee, FEE)
+      errors.add(:value, 'error settxfee')
       raise
     end
 
-    # コマンドをRubyで書いている感じ
-
-    sum_unspents = -> (unspents) { unspents.sum { |u| u['amount'] } }
-
-    unspents = RpcHelper.rpc(:listunspent, 0).reduce([]) do |memo_ary, unspent|
-      break memo_ary if sum_unspents.call(memo_ary) >= (VALUE + FEE)
-      memo_ary << unspent
-    end
-
-    sum = sum_unspents.call(unspents)
-    unless sum >= (VALUE + FEE)
-      errors.add(:value, '申し訳ございません。力尽きましたでございます。')
-      raise
-    end
-
-    inputs = unspents.map do |u|
-      {
-        "txid" => u["txid"],
-        "vout" => u["vout"]
-      }
-    end
-
-    outputs = {}
-    wallet_address = RpcHelper.rpc(:getnewaddress, '')
-    charge = (sum - VALUE - FEE)
-    unless BigDecimal.new(charge.to_s).floor(8).to_f == 0.0
-      outputs[wallet_address] = BigDecimal.new(charge.to_s).floor(8).to_f
-    end
-    outputs[address] = VALUE
-
-    hexstring = RpcHelper.rpc(:createrawtransaction, inputs, outputs)
-    signed_result = RpcHelper.rpc(:signrawtransaction, hexstring)
-
-    unless signed_result['complete']
-      errors.add(:value, '署名失敗')
-      raise
-    end
-
-    self.txid = RpcHelper.rpc(:sendrawtransaction, signed_result['hex'])
+    self.txid = RpcHelper.rpc(:sendtoaddress, address, VALUE)
     if txid.blank?
-      errors.add(:txid, '申し訳ございません。sendrawtransactionに失敗しました。少し時間をあけてから再度お試しください。解決しない場合はお手数おかけいたしまして申し訳ございませんが管理者までご連絡ください。')
+      errors.add(:txid, '申し訳ございません。送金できませんでした。手数料が不足しているようです。力尽きたでございまする。')
       raise
     end
     save!
