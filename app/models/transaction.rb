@@ -51,6 +51,12 @@ class Transaction < ApplicationRecord
       raise
     end
 
+    # 0.000226はsettxfeeに0.001を指定していたときにUTXOが1件のときの手数料になることが多い数字　これ以上ないとどうしようもない。
+    unless current_balance >= (VALUE + 0.000226)
+      errors.add(:value, '申し訳ございません。力尽きましたでございます。')
+      raise
+    end
+
     self.txid = RpcHelper.rpc(:sendtoaddress, address, VALUE)
     if txid.blank?
       errors.add(:txid, '申し訳ございません。送金できませんでした。手数料が不足しているようです。力尽きたでございまする。')
