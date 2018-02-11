@@ -1,3 +1,7 @@
+require 'open-uri'
+require 'timeout'
+require 'json'
+
 class Transaction < ApplicationRecord
   validates :txid,       presence: true
   validates :address,    presence: true
@@ -7,8 +11,8 @@ class Transaction < ApplicationRecord
   default_scope -> { order(created_at: :desc) }
   self.per_page = 20
 
-  VALUE = 0.001
-  FEE =   0.001 # Set the transaction fee per kB. Overwrites the paytxfee parameter.
+  DEFAULT_VALUE = 0.0006
+  DEFAULT_FEE   = 0.001 # Set the transaction fee per kB. Overwrites the paytxfee parameter.
 
   class << self
     def balance
@@ -24,7 +28,6 @@ class Transaction < ApplicationRecord
     current_balance = Transaction.balance
 
     self.date       = Time.zone.now.beginning_of_day
-    self.value      = VALUE
 
     if address.blank?
       errors.add(:address, 'あなた様のアドレスが指定されておりません')
@@ -46,22 +49,34 @@ class Transaction < ApplicationRecord
       raise
     end
 
-    unless RpcHelper.rpc(:settxfee, FEE)
+    self.value, fee = value_fee
+
+    unless RpcHelper.rpc(:settxfee, fee)
       errors.add(:value, 'error settxfee')
       raise
     end
 
     # 0.000226はsettxfeeに0.001を指定していたときにUTXOが1件のときの手数料になることが多い数字　これ以上ないとどうしようもない。
-    unless current_balance >= (VALUE + 0.000226)
-      errors.add(:value, '申し訳ございません。力尽きましたでございます。')
+    unless current_balance >= (value + 0.000226)
+      errors.add(:value, '申し訳ございません。力尽きましたでございまする。')
       raise
     end
 
-    self.txid = RpcHelper.rpc(:sendtoaddress, address, VALUE)
+    self.txid = RpcHelper.rpc(:sendtoaddress, address, value)
     if txid.blank?
       errors.add(:txid, '申し訳ございません。送金できませんでした。手数料が不足しているようです。力尽きたでございまする。')
       raise
     end
     save!
   end
+
+  private
+    def value_fee
+      Timeout.timeout(10) do
+        j = JSON.parse open('https://firebase.torifuku-kaiou.tokyo/monacoin-main-faucet/faucet.json', &:read)
+        [j['value'], j['fee']]
+      end
+    rescue Timeout::Error
+      [DEFAULT_VALUE, DEFAULT_FEE]
+    end
 end
