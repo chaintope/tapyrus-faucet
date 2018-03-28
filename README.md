@@ -38,9 +38,9 @@ $ bin/rails db:migrate
 
 ```
 $ mysql -uroot -p
-# mysql> CREATE DATABASE `monacoin-main-faucet_production`;
+# mysql> CREATE DATABASE `torifuku_faucet_production`;
 mysql> CREATE USER `mona-main-faucet`@localhost IDENTIFIED BY 'password';
-mysql> GRANT ALL PRIVILEGES ON `monacoin-main-faucet_production`.* TO `mona-main-faucet`@localhost IDENTIFIED BY 'password';
+mysql> GRANT ALL PRIVILEGES ON `torifuku_faucet_production`.* TO `torifuku_faucet`@localhost IDENTIFIED BY 'password';
 mysql> FLUSH PRIVILEGES;
 mysql> exit
 $ RAILS_ENV=production bin/rails db:create
@@ -52,7 +52,7 @@ $ RAILS_ENV=production bin/rails secret # => SECRET_KEY_BASE
 ```
 [ec2-user]
 $ sudo su - monacoin
-$ cd monacoin-main-faucet
+$ cd torifuku_faucet
 
 [monacoin]
 $ git pull
@@ -64,7 +64,7 @@ $ sudo su -
 
 [root]
 $ cd /srv/www
-$ cp -r /home/monacoin/monacoin-main-faucet/public .
+$ cp -r /home/monacoin/torifuku_faucet/public .
 $ chown -R nginx public/
 $ exit
 
@@ -75,7 +75,7 @@ $ sudo su - monacoin
 $ source ~/.bash_profile
 $ ps -ef | grep puma
 $ kill -9 pid
-$ cd monacoin-main-faucet
+$ cd torifuku_faucet
 $ nohup bin/rails server -e production -p 23333 &
 ```
 
@@ -100,5 +100,5 @@ $ bin/rails test
 # 日別集計
 
 ```
-mysql> SELECT DATE_FORMAT(date, '%Y-%m-%d') AS time, COUNT(*), SUM(value) AS SUM, SUM(value)/COUNT(*) AS AVE FROM `monacoin-main-faucet_production`.transactions GROUP BY date;
+mysql> SELECT DATE_FORMAT(date, '%Y-%m-%d') AS time, COUNT(*), SUM(value) AS SUM, SUM(value)/COUNT(*) AS AVE FROM `torifuku_faucet_production`.transactions GROUP BY date;
 ```

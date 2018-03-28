@@ -18,14 +18,14 @@ default: &default
 
 development:
   <<: *default
-  database: monacoin-main-faucet_development
+  database: torifuku_faucet_development
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: monacoin-main-faucet_test
+  database: torifuku_faucet_test
 
 # As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -48,6 +48,6 @@ test:
 #
 production:
   <<: *default
-  database: monacoin-main-faucet_production
-  username: mona-main-faucet
-  password: <%= ENV['MONACOIN_MAIN_FAUCET_DATABASE_PASSWORD'] %>
+  database: torifuku_faucet_production
+  username: torifuku_faucet
+  password: <%= ENV['TORIFUKU_FAUCET_DATABASE_PASSWORD'] %>
