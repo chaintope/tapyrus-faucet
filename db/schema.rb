@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180210110306) do
+ActiveRecord::Schema.define(version: 20180328130651) do
 
   create_table "transactions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "txid", null: false
@@ -20,10 +20,11 @@ ActiveRecord::Schema.define(version: 20180210110306) do
     t.float "value", limit: 24, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["address", "date"], name: "index_transactions_on_address_and_date"
+    t.string "type"
     t.index ["created_at"], name: "index_transactions_on_created_at"
     t.index ["date"], name: "index_transactions_on_date"
-    t.index ["ip_address", "date"], name: "index_transactions_on_ip_address_and_date", unique: true
+    t.index ["type", "ip_address", "address", "date"], name: "index_transactions_on_type_and_ip_address_and_address_and_date", unique: true
+    t.index ["type"], name: "index_transactions_on_type"
   end
 
 end

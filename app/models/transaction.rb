@@ -1,32 +1,38 @@
-require 'open-uri'
-require 'timeout'
-require 'json'
-
 class Transaction < ApplicationRecord
   validates :txid,       presence: true
+  validates :type,       presence: true, :uniqueness => { :scope => [:ip_address, :address, :date] }
   validates :address,    presence: true
-  validates :ip_address, presence: true, :uniqueness => { :scope => [:date] }
+  validates :ip_address, presence: true
   validates :date,       presence: true
   validates :value,      presence: true, numericality: true
   default_scope -> { order(created_at: :desc) }
   self.per_page = 20
 
-  DEFAULT_VALUE = 0.0006
-  DEFAULT_FEE   = 0.001 # Set the transaction fee per kB. Overwrites the paytxfee parameter.
-
   class << self
-    def balance
-      RpcHelper.rpc(:getbalance)
+    def wallet_address
+      # Transactionを生で使うことはない
+      # 必ずTransaction::Xxx がnewされている
+      new.rpc_helper.rpc(:getaddressesbyaccount, '').first
     end
 
-    def monacoin_address
-      RpcHelper.rpc(:getaddressesbyaccount, '').first
+    def balance
+      new.rpc_helper.rpc(:getbalance)
     end
   end
 
-  def send!
-    current_balance = Transaction.balance
+  def rpc_helper
+    raise 'Not implemented'
+  end
 
+  def set_txfee
+    # ここは空にしてTransaction::Monacoinだけ処理が実装されている
+  end
+
+  def value
+    raise 'Not implemented'
+  end
+
+  def send!
     self.date       = Time.zone.now.beginning_of_day
 
     if address.blank?
@@ -34,49 +40,43 @@ class Transaction < ApplicationRecord
       raise
     end
 
-    unless RpcHelper.rpc(:validateaddress, address)['isvalid']
+    unless rpc_helper.rpc(:validateaddress, address)['isvalid']
       errors.add(:address, 'アドレスに誤りがございます')
       raise
     end
 
-    if Transaction.find_by(ip_address: ip_address, date: date)
-      errors.add(:date, '本日はご利用済です。明日のご利用を心よりお待ちいたしております。')
+    # typeとip_addressとdate
+    if Transaction.find_by(type: type, ip_address: ip_address, date: date)
+      errors.add(:ip_address, '本日はご利用済です。明日のご利用を心よりお待ちいたしております。')
       raise
     end
 
-    if address != 'MPg3hUaCLfXXDQdf7nYZMesovc9tcoFzKk' && Transaction.find_by(address: address, date: date)
+    # typeとaddressとdate
+    if Transaction.find_by(type: type, address: address, date: date)
       errors.add(:address, '本日はご利用済です。明日のご利用を心よりお待ちいたしております。')
       raise
     end
 
-    self.value, fee = value_fee
-
-    unless RpcHelper.rpc(:settxfee, fee)
-      errors.add(:value, 'error settxfee')
+    if Transaction.find_by(type: type, ip_address: ip_address, address: address, date: date)
+      errors.add(:date, '本日はご利用済です。明日のご利用を心よりお待ちいたしております。')
       raise
     end
 
+    set_txfee
+
+    self.value = value
+
     # 0.000226はsettxfeeに0.001を指定していたときにUTXOが1件のときの手数料になることが多い数字　これ以上ないとどうしようもない。
-    unless current_balance >= (value + 0.000226)
+    unless rpc_helper.rpc(:getbalance) >= (value + 0.000226)
       errors.add(:value, '申し訳ございません。力尽きましたでございまする。')
       raise
     end
 
-    self.txid = RpcHelper.rpc(:sendtoaddress, address, value)
+    self.txid = rpc_helper.rpc(:sendtoaddress, address, value)
     if txid.blank?
       errors.add(:txid, '申し訳ございません。送金できませんでした。手数料が不足しているようです。力尽きたでございまする。')
       raise
     end
     save!
   end
-
-  private
-    def value_fee
-      Timeout.timeout(10) do
-        j = JSON.parse open('https://firebase.torifuku-kaiou.tokyo/monacoin-main-faucet/faucet.json', &:read)
-        [j['value'], j['fee']]
-      end
-    rescue Timeout::Error
-      [DEFAULT_VALUE, DEFAULT_FEE]
-    end
 end
