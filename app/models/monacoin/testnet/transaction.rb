@@ -7,7 +7,8 @@ class Monacoin::Testnet::Transaction < Transaction
                       Rails.env.production? ? 9402 : 19402)
   end
 
-  def value
-    10
+  def calc_value
+    value = Monacoin::Testnet::Transaction.balance
+    (value / 1000.0).round(2)
   end
 end

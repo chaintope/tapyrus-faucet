@@ -23,7 +23,7 @@ class Monacoin::Transaction < Transaction
     end
   end
 
-  def value
+  def calc_value
     value, fee = value_fee
     value
   end

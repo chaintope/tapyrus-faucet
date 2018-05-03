@@ -28,7 +28,7 @@ class Transaction < ApplicationRecord
     # ここは空にしてTransaction::Monacoinだけ処理が実装されている
   end
 
-  def value
+  def calc_value
     raise 'Not implemented'
   end
 
@@ -59,7 +59,7 @@ class Transaction < ApplicationRecord
 
     set_txfee
 
-    self.value = value
+    self.value = calc_value
 
     # 0.000226はsettxfeeに0.001を指定していたときにUTXOが1件のときの手数料になることが多い数字　これ以上ないとどうしようもない。
     unless rpc_helper.rpc(:getbalance) >= (value + 0.000226)
