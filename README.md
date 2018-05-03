@@ -53,12 +53,13 @@ $ RAILS_ENV=production bin/rails secret # => SECRET_KEY_BASE
 ```
 
 ### リリースのたびに毎回
+- 歴史的背景があって、`monacoin` ユーザで動かす
 ```
 [ec2-user]
 $ sudo su - faucet
 $ cd torifuku_faucet
 
-[faucet]
+[monacoin]
 $ git pull
 $ RAILS_ENV=production bin/rails assets:precompile
 $ exit
@@ -75,12 +76,12 @@ $ exit
 [ec2-user]
 $ sudo su - faucet
 
-[faucet]
+[monacoin]
 $ source ~/.bash_profile
 $ ps -ef | grep puma
 $ kill -9 pid
 $ cd torifuku_faucet
-$ nohup bin/rails server -e production -p 23333 &
+$ nohup bin/rails server -e production -p 3000 &
 ```
 
 
