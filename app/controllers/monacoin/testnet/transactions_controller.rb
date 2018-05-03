@@ -20,4 +20,8 @@ class Monacoin::Testnet::TransactionsController < TransactionsController
   def parameters_key
     :monacoin_testnet_transaction
   end
+
+  def footer_medi8_ad_url
+    "https://js.medi-8.net/t/289/073/a1289073.js"
+  end
 end

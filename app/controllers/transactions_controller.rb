@@ -62,6 +62,10 @@ class TransactionsController < ApplicationController
   def parameters_key
     raise
   end
+
+  def footer_medi8_ad_url
+    raise
+  end
   # Overrideしてほしいメソッド ↑↑↑
 
   def index
@@ -70,6 +74,7 @@ class TransactionsController < ApplicationController
     @transaction = @klass.new
     @wallet_address = @klass.wallet_address
     @donate_to = donate_to
+    @footer_medi8_ad_url = footer_medi8_ad_url
   end
 
   def create
@@ -102,6 +107,7 @@ class TransactionsController < ApplicationController
     @transactions = @klass.paginate(:page => params[:page])
     @wallet_address = @klass.wallet_address
     @donate_to = donate_to
+    @footer_medi8_ad_url = footer_medi8_ad_url
     render :index
   end
 

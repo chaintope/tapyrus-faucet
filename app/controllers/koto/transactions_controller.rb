@@ -23,4 +23,8 @@ class Koto::TransactionsController < TransactionsController
   def parameters_key
     :koto_transaction
   end
+
+  def footer_medi8_ad_url
+    "https://js.medi-8.net/t/286/293/a1286293.js"
+  end
 end
