@@ -15,9 +15,18 @@ end
 module Torifuku::WillPaginateExt
   def tag(name, value, attributes = {})
     result = super(name, value, attributes)
+    # monacoin main
     m = /\A(<a href="\/monacoin\?page=\d+")(>.+)$/.match(result)
     m = /\A(<a rel="next" href="\/monacoin\?page=\d+")(>.+)$/.match(result) unless m
     m = /\A(<a rel="prev" href="\/monacoin\?page=\d+")(>.+)$/.match(result) unless m
+    # koto
+    m = /\A(<a href="\/koto\?page=\d+")(>.+)$/.match(result) unless m
+    m = /\A(<a rel="next" href="\/koto\?page=\d+")(>.+)$/.match(result) unless m
+    m = /\A(<a rel="prev" href="\/koto\?page=\d+")(>.+)$/.match(result) unless m
+    # monacoin testnet
+    m = /\A(<a href="\/\?page=\d+")(>.+)$/.match(result) unless m
+    m = /\A(<a rel="next" href="\/\?page=\d+")(>.+)$/.match(result) unless m
+    m = /\A(<a rel="prev" href="\/\?page=\d+")(>.+)$/.match(result) unless m
     m = /\A(<a href="#")(>.+)$/.match(result) unless m
     if m
       result = "#{m[1]} target=\"_self\"#{m[2]}"
