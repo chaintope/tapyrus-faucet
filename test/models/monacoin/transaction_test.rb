@@ -28,5 +28,10 @@ class Monacoin::TransactionTest < ActiveSupport::TestCase
     t = Monacoin::Testnet::Transaction.new(address: 'address', ip_address: '127.0.0.1')
     t.send!
     assert_equal(1, Monacoin::Testnet::Transaction.count)
+
+    assert_equal(0, Koto::Transaction.count)
+    t = Koto::Transaction.new(address: 'address', ip_address: '127.0.0.1')
+    t.send!
+    assert_equal(1, Koto::Transaction.count)
   end
 end
