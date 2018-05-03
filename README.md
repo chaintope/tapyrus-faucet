@@ -74,7 +74,7 @@ $ chown -R nginx public/
 $ exit
 
 [ec2-user]
-$ sudo su - faucet
+$ sudo su - monacoin
 
 [monacoin]
 $ source ~/.bash_profile
