@@ -18,7 +18,7 @@ class RpcHelper
     when :validateaddress
       {'isvalid' => true}
     when :getbalance
-      100
+      400
     when :settxfee
       true
     when :sendtoaddress

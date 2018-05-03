@@ -1,10 +1,13 @@
-class Monacoin::TransactionsController < TransactionsController
+require 'open-uri'
+require 'timeout'
+
+class Koto::TransactionsController < TransactionsController
   def klass
-    Monacoin::Transaction
+    Koto::Transaction
   end
 
   def index_path
-    monacoin_transactions_path
+    koto_transactions_path
   end
 
   def donate_to
@@ -18,10 +21,10 @@ class Monacoin::TransactionsController < TransactionsController
   end
 
   def parameters_key
-    :monacoin_transaction
+    :koto_transaction
   end
 
   def footer_medi8_ad_url
-    "https://js.medi-8.net/t/287/241/a1287241.js"
+    "https://js.medi-8.net/t/286/293/a1286293.js"
   end
 end

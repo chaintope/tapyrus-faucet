@@ -1,0 +1,72 @@
+<% @transaction = Koto::Transaction.new unless @transaction %>
+<div class="header">
+  <%= link_to "http://koto.cash/", target: "_blank" do %>
+    <%= image_tag "koto.png" %>
+  <% end %>
+  <h1>Faucet</h1>
+  <!--  ad tags Size: 728x90 ZoneId:1271607-->
+  <script type="text/javascript" src="https://js.medi-8.net/t/271/607/a1271607.js"></script>
+</div>
+
+<div class="row">
+  <aside class="col-md-3">
+    <section class="send_to_address_form">
+      <%= form_for(@transaction) do |f| %>
+        <%= render 'shared/error_messages' %>
+        <%= f.label :address %>
+        <%= f.text_field :address, class: 'form-control' %>
+        <p />
+        <p />
+        <p />
+        <%= invisible_recaptcha_tags text: 'Send', badge: 'inline', class: "btn btn-primary" %>
+      <% end %>
+      <p><a href="http://koto.cash/" target="_blank">Koto</a>を少量ではありますがさしあげます。</p>
+      <h4>このサイトの保有量</h4>
+      <h1><span class="text-gold"><%= @klass.balance %> KOTO</span></h1>
+      <p />
+      <p />
+      <a href="https://discord.gg/HmsTDww" class="badge badge-info" target="_blank">DISCORD</a>
+      <a href="https://discourse.koto.cash/" class="badge badge-warning" target="_blank">Forum</a>
+      <a href="<%= @askmona_url %>" class="badge badge-success" target="_blank">Ask Mona</a>
+      <a href="https://monacoin.torifuku-kaiou.tokyo/monacoin/" class="badge" target="_blank">Monacoin Faucet</a>
+      <a href="https://koto.bex.jp/" class="badge" target="_blank">Koto(コト)はじめ</a>
+      <a href="http://kotokoto.space/" class="badge" target="_blank">じっくりkotokoto</a>
+
+      <div class="sidebar-ad">
+        <!--  ad tags Size: 120x600 ZoneId:1273796-->
+        <script type="text/javascript" src="https://js.medi-8.net/t/273/796/a1273796.js"></script>
+        <!--  ad tags Size: 120x600 ZoneId:1292697-->
+        <script type="text/javascript" src="https://js.medi-8.net/t/292/697/a1292697.js"></script>
+      </div>
+    </section>
+  </aside>
+  <div class="col-md-9">
+    <% if @transactions.present? %>
+    <table class="table table-bordered table-striped">
+      <tr>
+        <th>txid</th>
+        <th>address</th>
+        <th>value</th>
+        <th>datetime</th>
+      </tr>
+      <% @transactions.each do |t| %>
+      <tr>
+        <td><%= link_to t.txid, "https://insight.kotocoin.info/tx/#{t.txid}", { :target => "_blank" } %></td>
+        <td><%= link_to t.address, "https://insight.kotocoin.info/address/#{t.address}", { :target => "_blank" } %></td>
+        <td align="right"><%= t.value %></td>
+        <td><%= t.created_at %></td>
+      </tr>
+      <% end %>
+    </table>
+    <div class="zaif-footer">
+      <%= will_paginate @transactions %>
+      <a href="https://zaif.jp?ac=gnitbf134g" rel="nofollow"><img src="https://d2p8taqyjofgrq.cloudfront.net/images/affiliate/banner/zaif_A_468x60.png?ac=gnitbf134g" /></a>
+    </div>
+    <% else %>
+      <p>Not Found</p>
+      <div style="float:bottom;">
+        <a href="https://zaif.jp?ac=gnitbf134g" rel="nofollow"><img src="https://d2p8taqyjofgrq.cloudfront.net/images/affiliate/banner/zaif_A_728x90.png?ac=gnitbf134g" /></a>
+      </div>
+    <% end %>
+  </div>
+</div>
