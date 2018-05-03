@@ -27,4 +27,12 @@ class Koto::TransactionsController < TransactionsController
   def footer_medi8_ad_url
     "https://js.medi-8.net/t/286/293/a1286293.js"
   end
+
+  def title
+    'Koto Faucet'
+  end
+
+  def favicon
+    'koto-favicon.png'
+  end
 end

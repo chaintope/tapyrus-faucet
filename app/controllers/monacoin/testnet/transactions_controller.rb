@@ -1,3 +1,6 @@
+require 'open-uri'
+require 'timeout'
+
 class Monacoin::Testnet::TransactionsController < TransactionsController
   def klass
     Monacoin::Testnet::Transaction
@@ -23,5 +26,13 @@ class Monacoin::Testnet::TransactionsController < TransactionsController
 
   def footer_medi8_ad_url
     "https://js.medi-8.net/t/289/073/a1289073.js"
+  end
+
+  def title
+    'Monacoin testnet4 Faucet'
+  end
+
+  def favicon
+    'monacoin-favicon.ico'
   end
 end

@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180503004439) do
+ActiveRecord::Schema.define(version: 2018_05_03_004439) do
 
-  create_table "transactions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "transactions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "txid", null: false
     t.string "address", null: false
     t.string "ip_address", null: false
     t.date "date", null: false
-    t.float "value", limit: 24, null: false
+    t.float "value", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "type"
