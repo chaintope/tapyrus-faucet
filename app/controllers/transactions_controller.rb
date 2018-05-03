@@ -66,6 +66,14 @@ class TransactionsController < ApplicationController
   def footer_medi8_ad_url
     raise
   end
+
+  def title
+    raise
+  end
+
+  def favicon
+    raise
+  end
   # Overrideしてほしいメソッド ↑↑↑
 
   def index
@@ -75,6 +83,8 @@ class TransactionsController < ApplicationController
     @wallet_address = @klass.wallet_address
     @donate_to = donate_to
     @footer_medi8_ad_url = footer_medi8_ad_url
+    @title = title
+    @favicon = favicon
   end
 
   def create
@@ -108,6 +118,8 @@ class TransactionsController < ApplicationController
     @wallet_address = @klass.wallet_address
     @donate_to = donate_to
     @footer_medi8_ad_url = footer_medi8_ad_url
+    @title = title
+    @favicon = favicon
     render :index
   end
 
