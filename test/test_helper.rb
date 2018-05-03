@@ -7,3 +7,22 @@ class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...
 end
+
+# RpcHelperにモンキーパッチしてテストする
+class RpcHelper
+  def initialize(rpc_user, rpc_password, host, port)
+  end
+
+  def rpc(method, *params)
+    case method
+    when :validateaddress
+      {'isvalid' => true}
+    when :getbalance
+      100
+    when :settxfee
+      true
+    when :sendtoaddress
+      SecureRandom.base64(10)
+    end
+  end
+end
