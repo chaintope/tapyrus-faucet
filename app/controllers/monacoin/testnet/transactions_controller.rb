@@ -18,6 +18,6 @@ class Monacoin::Testnet::TransactionsController < TransactionsController
   end
 
   def parameters_key
-    :monacoin_testnet_ransaction
+    :monacoin_testnet_transaction
   end
 end
