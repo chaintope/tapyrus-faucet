@@ -1,0 +1,64 @@
+<div style="display: flex;flex-direction: row;flex-wrap: wrap;justify-content: space-evenly;align-items: center;">
+  <h1><a href="https://monacoin.org/">Monacoin</a> testnet4 Faucet</h1>
+  <!--  ad tags Size: 728x90 ZoneId:1273791-->
+  <script type="text/javascript" src="https://js.medi-8.net/t/273/791/a1273791.js"></script>
+</div>
+
+
+<div class="row">
+  <aside class="col-md-3">
+    <section class="send_to_address_form">
+      <%= form_for(@transaction) do |f| %>
+        <%= render 'shared/error_messages' %>
+        <%= f.label :address %>
+        <%= f.text_field :address, class: 'form-control' %>
+        <p />
+        <%= recaptcha_tags %>
+        <%= f.submit "Send", class: "btn btn-primary" %>
+      <% end %>
+      <p>Monacoin(testnet4)を少量ではありますがさしあげます。もう一度申し上げます。testnet4です。</p>
+      <h4>このサイトの保有量</h4>
+      <span class="text-info"><%= @klass.balance %> MONA</span>
+      <table border="0" cellpadding="0" cellspacing="0"><tr><td><div style="background-color:#FFFFFF;width:138px;margin:0px;padding-top:6px;text-align:center;overflow:auto;"><a href="https://hb.afl.rakuten.co.jp/hgc/1653a48c.1d5fa8d8.1653a48d.ab97038a/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fguruguru-ds%2F9784061538313%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fguruguru-ds%2Fi%2F12017028%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIxMjh4MTI4IiwibmFtIjowLCJuYW1wIjoiZG93biIsImNvbSI6MSwiY29tcCI6ImRvd24iLCJwcmljZSI6MCwiYm9yIjowLCJjb2wiOjB9" target="_blank" rel="nofollow" style="word-wrap:break-word;"  ><img src="https://hbb.afl.rakuten.co.jp/hgb/1653a48c.1d5fa8d8.1653a48d.ab97038a/?me_id=1262790&item_id=12017028&m=https%3A%2F%2Fthumbnail.image.rakuten.co.jp%2F%400_mall%2Fguruguru-ds%2Fcabinet%2Fb%2F8%2F313%2F9784061538313.jpg%3F_ex%3D80x80&pc=https%3A%2F%2Fthumbnail.image.rakuten.co.jp%2F%400_mall%2Fguruguru-ds%2Fcabinet%2Fb%2F8%2F313%2F9784061538313.jpg%3F_ex%3D128x128&s=128x128&t=picttext" border="0" style="margin:2px" alt="" title=""></a><p style="font-size:12px;line-height:1.4em;text-align:left;margin:0px;padding:2px 6px;word-wrap:break-word"><a href="https://hb.afl.rakuten.co.jp/hgc/1653a48c.1d5fa8d8.1653a48d.ab97038a/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fguruguru-ds%2F9784061538313%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fguruguru-ds%2Fi%2F12017028%2F&link_type=picttext&ut=eyJwYWdlIjoiaXRlbSIsInR5cGUiOiJwaWN0dGV4dCIsInNpemUiOiIxMjh4MTI4IiwibmFtIjowLCJuYW1wIjoiZG93biIsImNvbSI6MSwiY29tcCI6ImRvd24iLCJwcmljZSI6MCwiYm9yIjowLCJjb2wiOjB9" target="_blank" rel="nofollow" style="word-wrap:break-word;"  ></a></p></div><br><p style="font-size:12px;line-height:1.4em;margin:5px;word-wrap:break-word">↑とても参考にしました</p></td></tr></table>
+      <h6>以前は寄付していただいた量と採掘量を表示しておりましたが計算処理が重たいため割愛とさせていただきました(2018/01/29)</h6>
+    </section>
+  </aside>
+  <div class="col-md-9">
+    <% if @transactions.present? %>
+    <table class="table table-bordered table-striped">
+      <tr>
+        <th>txid</th>
+        <th>address</th>
+        <th>value</th>
+        <th>datetime</th>
+      </tr>
+      <% @transactions.each do |t| %>
+      <tr>
+        <td><%= t.txid %></td>
+        <td><%= t.address %></td>
+        <td align="right"><%= t.value %></td>
+        <td><%= t.created_at %></td>
+      </tr>
+      <% end %>
+    </table>
+    <%= will_paginate @transactions %>
+    <% else %>
+      <p>Not Found</p>
+    <% end %>
+    <div style="float:bottom;">
+      <a href="https://zaif.jp?ac=gnitbf134g" rel="nofollow"><img src="https://d2p8taqyjofgrq.cloudfront.net/images/affiliate/banner/zaif_A_728x90.png?ac=gnitbf134g" /></a>
+      <div style="float:right;">
+        <%= image_tag('monacoin.png', :size => "128x128") %>
+      </div>
+      <div style="float:right;">
+        <h4>管理者の本番Monacoinアドレス</h4>
+        <a padding:5px;
+          margin:5px;"
+          href="monacoin:<%= @donate_to %>">
+          <span class="text-info"><%= @donate_to %></span>
+        </a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </div>
+    </div>
+  </div>
+</div>
