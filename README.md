@@ -18,6 +18,8 @@ Things you may want to cover:
 - MONACOIN_MAIN_FAUCET_RPC_PASSWORD
 - MONACOIN_TESTNET_FAUCET_RPC_USER
 - MONACOIN_TESTNET_FAUCET_RPC_PASSWORD
+- KOTO_RPC_FAUCET_USER
+- KOTO_RPC_FAUCET_PASSWORD
 - RAKUTEN_AFFILIATEID
 - RECAPTCHA_SITE_KEY
 - RECAPTCHA_SECRET_KEY
@@ -35,13 +37,13 @@ $ bin/rails db:migrate
 ```
 
 ## production
-- MONACOIN_MAIN_FAUCET_DATABASE_PASSWORD
+- TORIFUKU_FAUCET_DATABASE_PASSWORD
 - RAILS_SERVE_STATIC_FILES=1
 
 ```
 $ mysql -uroot -p
 # mysql> CREATE DATABASE `torifuku_faucet_production`;
-mysql> CREATE USER `mona-main-faucet`@localhost IDENTIFIED BY 'password';
+mysql> CREATE USER `torifuku_faucet`@localhost IDENTIFIED BY 'password';
 mysql> GRANT ALL PRIVILEGES ON `torifuku_faucet_production`.* TO `torifuku_faucet`@localhost IDENTIFIED BY 'password';
 mysql> FLUSH PRIVILEGES;
 mysql> exit
@@ -53,10 +55,10 @@ $ RAILS_ENV=production bin/rails secret # => SECRET_KEY_BASE
 ### リリースのたびに毎回
 ```
 [ec2-user]
-$ sudo su - monacoin
+$ sudo su - faucet
 $ cd torifuku_faucet
 
-[monacoin]
+[faucet]
 $ git pull
 $ RAILS_ENV=production bin/rails assets:precompile
 $ exit
@@ -71,9 +73,9 @@ $ chown -R nginx public/
 $ exit
 
 [ec2-user]
-$ sudo su - monacoin
+$ sudo su - faucet
 
-[monacoin]
+[faucet]
 $ source ~/.bash_profile
 $ ps -ef | grep puma
 $ kill -9 pid
