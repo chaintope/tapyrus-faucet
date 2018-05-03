@@ -1,3 +1,4 @@
+<% @transaction = Monacoin::Transaction.new unless @transaction %>
 <div class="header">
   <%= link_to "https://monacoin.org/", target: "_blank" do %>
     <%= image_tag "monacoin.png", size: '48x48' %>
