@@ -10,7 +10,7 @@
 <div class="row">
   <aside class="col-md-3">
     <section class="send_to_address_form">
-      <%= form_for([:monacoin, @transaction]) do |f| %>
+      <%= form_for(@transaction) do |f| %>
         <%= render 'shared/error_messages' %>
         <%= f.label :address %>
         <%= f.text_field :address, class: 'form-control' %>
@@ -21,7 +21,7 @@
       <% end %>
       <p><a href="https://monacoin.org/" target="_blank">Monacoin</a>を少量ではありますがさしあげます。</p>
       <h4>このサイトの保有量</h4>
-      <h1><span class="text-gold"><%= Transaction.balance %> MONA</span></h1>
+      <h1><span class="text-gold"><%= @klass.balance %> MONA</span></h1>
       <p />
       <p />
       <a href="https://monacoin-testnet-faucet.torifuku-kaiou.tokyo/" class="badge badge-success" target="_blank">Testnet4 Faucet</a>
