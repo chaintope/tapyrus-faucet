@@ -4,7 +4,7 @@ class Monacoin::Testnet::Transaction < Transaction
                       ENV['MONACOIN_TESTNET_FAUCET_RPC_USER'],
                       ENV['MONACOIN_TESTNET_FAUCET_RPC_PASSWORD'],
                       Rails.env.production? ? 'localhost' : '192.168.1.12',
-                      Rails.env.production? ? 9402 : 19402)
+                      19402)
   end
 
   def calc_value
