@@ -1,8 +1,8 @@
 class Transaction < ApplicationRecord
   validates :txid,       presence: true
-  validates :type,       presence: true, :uniqueness => { :scope => [:ip_address, :address, :date] }
-  validates :address,    presence: true
-  validates :ip_address, presence: true
+  validates :type,       presence: true
+  validates :address,    presence: true, :uniqueness => { :scope => [:type, :date] }
+  validates :ip_address, presence: true, :uniqueness => { :scope => [:type, :date] }
   validates :date,       presence: true
   validates :value,      presence: true, numericality: true
   default_scope -> { order(created_at: :desc) }
@@ -54,11 +54,6 @@ class Transaction < ApplicationRecord
     # typeとaddressとdate
     if Transaction.find_by(type: type, address: address, date: date)
       errors.add(:address, '本日はご利用済です。明日のご利用を心よりお待ちいたしております。')
-      raise
-    end
-
-    if Transaction.find_by(type: type, ip_address: ip_address, address: address, date: date)
-      errors.add(:date, '本日はご利用済です。明日のご利用を心よりお待ちいたしております。')
       raise
     end
 
