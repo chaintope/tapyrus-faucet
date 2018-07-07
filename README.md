@@ -53,31 +53,25 @@ $ RAILS_ENV=production bin/rails secret # => SECRET_KEY_BASE
 ```
 
 ### リリースのたびに毎回
-- 歴史的背景があって、`monacoin` ユーザで動かす
 ```
-[ec2-user]
-$ sudo su - faucet
-$ cd torifuku_faucet
+[sammy]
+$ sudo apt-get update
+$ sudo apt-get upgrade
 
-[monacoin]
+$ cd torifuku_faucet
 $ git pull
 $ RAILS_ENV=production bin/rails assets:precompile
-$ exit
 
-[ec2-user]
 $ sudo su -
 
 [root]
 $ cd /srv/www
-$ cp -r /home/monacoin/torifuku_faucet/public .
+$ cp -r /home/sammy/torifuku_faucet/public .
 $ chown -R nginx public/
 $ exit
 
-[ec2-user]
-$ sudo su - monacoin
-
-[monacoin]
-$ source ~/.bash_profile
+[sammy]
+$ source ~/.profile
 $ ps -ef | grep puma
 $ kill -9 pid
 $ cd torifuku_faucet
