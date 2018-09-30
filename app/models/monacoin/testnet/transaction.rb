@@ -9,6 +9,10 @@ class Monacoin::Testnet::Transaction < Transaction
 
   def calc_value
     value = Monacoin::Testnet::Transaction.balance
-    (value / 1000.0).round(2)
+    if value > 10
+      5
+    else
+      (value / 1000.0).round(2)
+    end
   end
 end
