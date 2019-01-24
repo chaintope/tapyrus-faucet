@@ -78,6 +78,31 @@ $ cd torifuku_faucet
 $ nohup bin/rails server -e production -p 3000 &
 ```
 
+# 復旧手段
+```
+[local]
+$ ssh -i ~/.ssh/time4vps -p 50417 sammy@time.torifuku-kaiou.tokyo
+
+[server]
+$ cd ~/line_bot/
+$ nohup bundle exec ruby -I. app.rb &
+
+$ sudo su - monacoin-testnet
+$ monacoind -daemon
+$ exit
+
+$ sudo su - monacoin
+$ monacoind -daemon
+$ exit
+
+$ sudo su - koto
+$ cd koto2
+$ src/kotod -daemon
+$ exit
+
+$ cd ~/torifuku_faucet
+$ nohup bin/rails server -e production -p 3000 &
+```
 
 
 # Database initialization
