@@ -1,0 +1,189 @@
+<!-- Create a button that your customers click to complete their purchase. Customize the styling to suit your branding. -->
+<button
+  style="background-color:#6772E5;color:#FFF;padding:8px 12px;border:0;border-radius:4px;font-size:1em"
+  id="checkout-button-sku_Fdiy8UlWgOZC8V"
+  role="link"
+  >
+  100円寄付
+</button>
+<br />
+<br />
+<button
+  style="background-color:#6772E5;color:#FFF;padding:8px 12px;border:0;border-radius:4px;font-size:1em"
+  id="checkout-button-sku_FdizjthkKTrHLx"
+  role="link"
+  >
+  1,000円寄付
+</button>
+<br />
+<br />
+<button
+  style="background-color:#6772E5;color:#FFF;padding:8px 12px;border:0;border-radius:4px;font-size:1em"
+  id="checkout-button-sku_Fdize6Jrz9tQA6"
+  role="link"
+  >
+  10,000円寄付
+</button>
+<br />
+<br />
+<button
+  style="background-color:#6772E5;color:#FFF;padding:8px 12px;border:0;border-radius:4px;font-size:1em"
+  id="checkout-button-sku_FdizppCkALHEIB"
+  role="link"
+  >
+  donate $1 USD
+</button>
+<br />
+<br />
+<button
+  style="background-color:#6772E5;color:#FFF;padding:8px 12px;border:0;border-radius:4px;font-size:1em"
+  id="checkout-button-sku_Fdj0PtpmMbgchr"
+  role="link"
+  >
+  donate $10 USD
+</button>
+<br />
+<br />
+<button
+  style="background-color:#6772E5;color:#FFF;padding:8px 12px;border:0;border-radius:4px;font-size:1em"
+  id="checkout-button-sku_Fdj0zBJcIJyCf9"
+  role="link"
+  >
+  donate $100 USD
+</button>
+<br />
+<br />
+
+<div id="error-message"></div>
+
+<script>
+  var e = document.getElementById('apikey');
+  var stripe_api_key = e.getAttribute('data-stripe-api-key');
+  var stripe = Stripe(stripe_api_key);
+
+  var checkoutButton = document.getElementById('checkout-button-sku_Fdiy8UlWgOZC8V');
+  checkoutButton.addEventListener('click', function () {
+    stripe.redirectToCheckout({
+      items: [{sku: 'sku_Fdiy8UlWgOZC8V', quantity: 1}],
+
+      successUrl: 'https://firebase.torifuku-kaiou.tokyo/success.html',
+      cancelUrl: 'https://firebase.torifuku-kaiou.tokyo/canceled.html',
+    })
+    .then(function (result) {
+      if (result.error) {
+        var displayError = document.getElementById('error-message');
+        displayError.textContent = result.error.message;
+      }
+    });
+  });
+</script>
+
+<script>
+  var e = document.getElementById('apikey');
+  var stripe_api_key = e.getAttribute('data-stripe-api-key');
+  var stripe = Stripe(stripe_api_key);
+
+  var checkoutButton = document.getElementById('checkout-button-sku_FdizjthkKTrHLx');
+  checkoutButton.addEventListener('click', function () {
+    stripe.redirectToCheckout({
+      items: [{sku: 'sku_FdizjthkKTrHLx', quantity: 1}],
+
+      successUrl: 'https://firebase.torifuku-kaiou.tokyo/success.html',
+      cancelUrl: 'https://firebase.torifuku-kaiou.tokyo/canceled.html',
+    })
+    .then(function (result) {
+      if (result.error) {
+        var displayError = document.getElementById('error-message');
+        displayError.textContent = result.error.message;
+      }
+    });
+  });
+</script>
+
+<script>
+  var e = document.getElementById('apikey');
+  var stripe_api_key = e.getAttribute('data-stripe-api-key');
+  var stripe = Stripe(stripe_api_key);
+
+  var checkoutButton = document.getElementById('checkout-button-sku_Fdize6Jrz9tQA6');
+  checkoutButton.addEventListener('click', function () {
+    stripe.redirectToCheckout({
+      items: [{sku: 'sku_Fdize6Jrz9tQA6', quantity: 1}],
+
+      successUrl: 'https://firebase.torifuku-kaiou.tokyo/success.html',
+      cancelUrl: 'https://firebase.torifuku-kaiou.tokyo/canceled.html',
+    })
+    .then(function (result) {
+      if (result.error) {
+        var displayError = document.getElementById('error-message');
+        displayError.textContent = result.error.message;
+      }
+    });
+  });
+</script>
+
+<script>
+  var e = document.getElementById('apikey');
+  var stripe_api_key = e.getAttribute('data-stripe-api-key');
+  var stripe = Stripe(stripe_api_key);
+
+  var checkoutButton = document.getElementById('checkout-button-sku_FdizppCkALHEIB');
+  checkoutButton.addEventListener('click', function () {
+    stripe.redirectToCheckout({
+      items: [{sku: 'sku_FdizppCkALHEIB', quantity: 1}],
+
+      successUrl: 'https://firebase.torifuku-kaiou.tokyo/success.html',
+      cancelUrl: 'https://firebase.torifuku-kaiou.tokyo/canceled.html',
+    })
+    .then(function (result) {
+      if (result.error) {
+        var displayError = document.getElementById('error-message');
+        displayError.textContent = result.error.message;
+      }
+    });
+  });
+</script>
+
+<script>
+  var e = document.getElementById('apikey');
+  var stripe_api_key = e.getAttribute('data-stripe-api-key');
+  var stripe = Stripe(stripe_api_key);
+
+  var checkoutButton = document.getElementById('checkout-button-sku_Fdj0PtpmMbgchr');
+  checkoutButton.addEventListener('click', function () {
+    stripe.redirectToCheckout({
+      items: [{sku: 'sku_Fdj0PtpmMbgchr', quantity: 1}],
+
+      successUrl: 'https://firebase.torifuku-kaiou.tokyo/success.html',
+      cancelUrl: 'https://firebase.torifuku-kaiou.tokyo/canceled.html',
+    })
+    .then(function (result) {
+      if (result.error) {
+        var displayError = document.getElementById('error-message');
+        displayError.textContent = result.error.message;
+      }
+    });
+  });
+</script>
+
+<script>
+  var e = document.getElementById('apikey');
+  var stripe_api_key = e.getAttribute('data-stripe-api-key');
+  var stripe = Stripe(stripe_api_key);
+
+  var checkoutButton = document.getElementById('checkout-button-sku_Fdj0zBJcIJyCf9');
+  checkoutButton.addEventListener('click', function () {
+    stripe.redirectToCheckout({
+      items: [{sku: 'sku_Fdj0zBJcIJyCf9', quantity: 1}],
+
+      successUrl: 'https://firebase.torifuku-kaiou.tokyo/success.html',
+      cancelUrl: 'https://firebase.torifuku-kaiou.tokyo/canceled.html',
+    })
+    .then(function (result) {
+      if (result.error) {
+        var displayError = document.getElementById('error-message');
+        displayError.textContent = result.error.message;
+      }
+    });
+  });
+</script>

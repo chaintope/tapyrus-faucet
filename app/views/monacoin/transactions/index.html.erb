@@ -22,6 +22,9 @@
       <p><a href="https://monacoin.org/" target="_blank">Monacoin</a>を少量ではありますがさしあげます。</p>
       <h4>このサイトの保有量</h4>
       <h1><span class="text-gold"><%= @klass.balance %> MONA</span></h1>
+      <div id="apikey" data-stripe-api-key="<%= ENV['STRIPE_API_KEY'] %>">
+        <%= render "shared/stripe" %>
+      </div>
       <p />
       <p />
       <a href="https://monacoin-testnet-faucet.torifuku-kaiou.tokyo/" class="badge badge-success" target="_blank">Testnet4 Faucet</a>
