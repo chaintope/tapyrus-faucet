@@ -22,6 +22,9 @@
       <p><a href="http://koto.cash/" target="_blank">Koto</a>を少量ではありますがさしあげます。</p>
       <h4>このサイトの保有量</h4>
       <h1><span class="text-gold"><%= @klass.balance %> KOTO</span></h1>
+      <div id="apikey" data-stripe-api-key="<%= ENV['STRIPE_API_KEY'] %>">
+        <%= render "shared/stripe" %>
+      </div>
       <p />
       <p />
       <a href="https://discord.gg/HmsTDww" class="badge badge-info" target="_blank">DISCORD</a>
