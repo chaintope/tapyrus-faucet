@@ -28,6 +28,15 @@
 <br />
 <button
   style="background-color:#6772E5;color:#FFF;padding:8px 12px;border:0;border-radius:4px;font-size:1em"
+  id="checkout-button-sku_FqJaSlv2yv79dr"
+  role="link"
+>
+  約一億円
+</button>
+<br />
+<br />
+<button
+  style="background-color:#6772E5;color:#FFF;padding:8px 12px;border:0;border-radius:4px;font-size:1em"
   id="checkout-button-sku_FdizppCkALHEIB"
   role="link"
   >
@@ -186,4 +195,37 @@
       }
     });
   });
+</script>
+
+<script>
+(function() {
+  var e = document.getElementById('apikey');
+  var stripe_api_key = e.getAttribute('data-stripe-api-key');
+  var stripe = Stripe(stripe_api_key);
+
+  var checkoutButton = document.getElementById('checkout-button-sku_FqJaSlv2yv79dr');
+  checkoutButton.addEventListener('click', function () {
+    // When the customer clicks on the button, redirect
+    // them to Checkout.
+    stripe.redirectToCheckout({
+      items: [{sku: 'sku_FqJaSlv2yv79dr', quantity: 1}],
+
+      // Do not rely on the redirect to the successUrl for fulfilling
+      // purchases, customers may not always reach the success_url after
+      // a successful payment.
+      // Instead use one of the strategies described in
+      // https://stripe.com/docs/payments/checkout/fulfillment
+      successUrl: 'https://firebase.torifuku-kaiou.tokyo/success',
+      cancelUrl: 'https://firebase.torifuku-kaiou.tokyo/canceled',
+    })
+    .then(function (result) {
+      if (result.error) {
+        // If `redirectToCheckout` fails due to a browser or network
+        // error, display the localized error message to your customer.
+        var displayError = document.getElementById('error-message');
+        displayError.textContent = result.error.message;
+      }
+    });
+  });
+})();
 </script>
