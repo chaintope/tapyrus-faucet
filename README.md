@@ -14,13 +14,10 @@ Things you may want to cover:
 
 # Configuration
 ## environment variables
-- MONACOIN_MAIN_FAUCET_RPC_USER
-- MONACOIN_MAIN_FAUCET_RPC_PASSWORD
-- MONACOIN_TESTNET_FAUCET_RPC_USER
-- MONACOIN_TESTNET_FAUCET_RPC_PASSWORD
-- KOTO_RPC_FAUCET_USER
-- KOTO_RPC_FAUCET_PASSWORD
-- RAKUTEN_AFFILIATEID
+- TAPYRUS_RPC_FAUCET_USER
+- TAPYRUS_RPC_FAUCET_PASSWORD
+- TAPYRUS_HOST
+- TAPYRUS_PORT
 - RECAPTCHA_SITE_KEY
 - RECAPTCHA_SECRET_KEY
 - MYSQL_ROOT_PASSWORD (for development/test)
@@ -37,7 +34,7 @@ $ bin/rails db:migrate
 ```
 
 ## production
-- TORIFUKU_FAUCET_DATABASE_PASSWORD
+- TAPYRUS_FAUCET_DATABASE_PASSWORD
 - RAILS_SERVE_STATIC_FILES=1
 
 ```
@@ -58,7 +55,7 @@ $ RAILS_ENV=production bin/rails secret # => SECRET_KEY_BASE
 $ sudo apt-get update
 $ sudo apt-get upgrade
 
-$ cd torifuku_faucet
+$ cd tapyrus-faucet
 $ git pull
 $ RAILS_ENV=production bin/rails assets:precompile
 
@@ -66,7 +63,7 @@ $ sudo su -
 
 [root]
 $ cd /srv/www
-$ cp -r /home/sammy/torifuku_faucet/public .
+$ cp -r /home/sammy/tapyrus-faucet/public .
 $ chown -R nginx public/
 $ exit
 
@@ -74,33 +71,21 @@ $ exit
 $ source ~/.profile
 $ ps -ef | grep puma
 $ kill -9 pid
-$ cd torifuku_faucet
+$ cd tapyrus-faucet
 $ nohup bin/rails server -e production -p 3000 &
 ```
 
 # 復旧手段
 ```
 [local]
-$ ssh -i ~/.ssh/time4vps -p 50417 sammy@time.torifuku-kaiou.tokyo
+$ ssh -i ~/.ssh/time4vps -p 50417 sammy@yourhost
 
 [server]
-$ cd ~/line_bot/
-$ nohup bundle exec ruby -I. app.rb &
-
-$ sudo su - monacoin-testnet
-$ monacoind -daemon
+$ sudo su - tapyrus
+$ tapyrusd -daemon
 $ exit
 
-$ sudo su - monacoin
-$ monacoind -daemon
-$ exit
-
-$ sudo su - koto
-$ cd koto2
-$ src/kotod -daemon
-$ exit
-
-$ cd ~/torifuku_faucet
+$ cd ~/tapyrus-faucet
 $ nohup bin/rails server -e production -p 3000 &
 ```
 
