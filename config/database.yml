@@ -50,4 +50,4 @@ production:
   <<: *default
   database: torifuku_faucet_production
   username: torifuku_faucet
-  password: <%= ENV['TORIFUKU_FAUCET_DATABASE_PASSWORD'] %>
+  password: <%= ENV['TAPYRUS_FAUCET_DATABASE_PASSWORD'] %>
