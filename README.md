@@ -75,6 +75,45 @@ $ cd tapyrus-faucet
 $ nohup bin/rails server -e production -p 3000 &
 ```
 
+# How to develop on docker images
+
+You can use docker and docker-compose to develop this project. Here is explanation for that.
+Before do this process, you need to prepare [tapyrus-core](https://github.com/chaintope/tapyrus-core) full node to 
+supply RPC endpoint.
+
+1. Build docker image
+
+```bash
+$ cd project/path
+$ docker-compose build
+``` 
+
+2. create `.env` file
+This is a sample of `.env`. You need to specify each environments.
+
+```text
+RECAPTCHA_SITE_KEY=xxxx_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+RECAPTCHA_SECRET_KEY=xxxx_xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxx
+TAPYRUS_RPC_FAUCET_USER=xxxxx
+TAPYRUS_RPC_FAUCET_PASSWORD=xxxxx
+TAPYRUS_HOST=xxxxx.xxxxx.xxxx
+TAPYRUS_PORT=xxxxx
+```
+
+You can get recapture keys from [here](https://www.google.com/recaptcha/intro/v3.html).
+
+3. Create database and migrate it
+
+```bash
+$ docker-compose up
+$ docker-compose run web rails db:create
+$ docker-compose run web rails db:migrate
+```
+
+4. Access `http://localhost:3000` from any browser 
+
+[http://localhost:3000](`http://localhost:3000`)
+
 # 復旧手段
 ```
 [local]
