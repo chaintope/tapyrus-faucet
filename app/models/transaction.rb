@@ -12,7 +12,7 @@ class Transaction < ApplicationRecord
     def wallet_address
       # Transactionを生で使うことはない
       # 必ずTransaction::Xxx がnewされている
-      new.rpc_helper.rpc(:getaddressesbyaccount, '').first
+      new.rpc_helper.rpc(:getnewaddress, '')
     end
 
     def balance
