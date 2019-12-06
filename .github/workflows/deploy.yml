@@ -1,0 +1,41 @@
+name: deploy
+
+on: [push]
+
+jobs:
+  deploy:
+    name: Build Docker Images and deploy to Amazon ECS
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: create .env file
+        run: |
+          echo -e "RECAPTCHA_SITE_KEY=${{secrets.RECAPTCHA_SITE_KEY}}\n" >> .env
+          echo -e "RECAPTCHA_SECRET_KEY=${{secrets.RECAPTCHA_SECRET_KEY}}\n" >> .env
+          echo -e "TAPYRUS_RPC_FAUCET_USER=${{secrets.TAPYRUS_RPC_FAUCET_USER}}\n" >> .env
+          echo -e "TAPYRUS_RPC_FAUCET_PASSWORD=${{secrets.TAPYRUS_RPC_FAUCET_PASSWORD}}\n" >> .env
+          echo -e "TAPYRUS_HOST=${{secrets.TAPYRUS_HOST}}\n" >> .env
+          echo -e "TAPYRUS_PORT=${{secrets.TAPYRUS_PORT}}\n" >> .env
+          echo -e "MYSQL_ROOT_PASSWORD=${{secrets.MYSQL_ROOT_PASSWORD}}\n" >> .env
+          echo -e "MYSQL_PASSWORD=${{secrets.MYSQL_PASSWORD}}\n" >> .env
+          echo -e "TAPYRUS_FAUCET_DATABASE_PASSWORD=${{secrets.TAPYRUS_FAUCET_DATABASE_PASSWORD}}\n" >> .env
+          echo -e "SECRET_KEY_BASE=${{secrets.SECRET_KEY_BASE}}\n" >> .env
+      - name: build docker images
+        run: |
+          docker login --username rantan39 --password ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          docker build -f Dockerfile-production -t rantan39/tapyrus-faucet:master .
+          docker build -f Dockerfile-nginx -t rantan39/tapyrus-faucet-nginx:master .
+          docker push rantan39/tapyrus-faucet:master
+          docker push rantan39/tapyrus-faucet-nginx:master
+      - name: install ecs-cli
+        run: |
+          sudo curl -o /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest
+          sudo chmod a+x /usr/local/bin/ecs-cli
+          ecs-cli configure --cluster tapyrus --default-launch-type EC2 --config-name tapyrus --region ap-northeast-1
+          ecs-cli configure profile --access-key ${{secrets.AWS_ACCESS_KEY_ID}} --secret-key ${{secrets.AWS_SECRET_ACCESS_KEY}} --profile-name tapyrus-profile
+      - name: deploy
+        run: |
+          ecs-cli compose --project-name tapyrus-faucet --file docker-compose-production.yml service rm  --cluster-config tapyrus --ecs-profile tapyrus-profile
+          ecs-cli compose --project-name tapyrus-faucet-nginx --file docker-compose-production2.yml service rm  --cluster-config tapyrus --ecs-profile tapyrus-profile
+          ecs-cli compose --project-name tapyrus-faucet --file docker-compose-production.yml service up --create-log-groups --cluster-config tapyrus --ecs-profile tapyrus-profile --target-group-arn arn:aws:elasticloadbalancing:ap-northeast-1:104420014930:targetgroup/tapyrus-faucet/ee474c92d3834903 --container-name app --container-port 3000 --force-deployment
+          ecs-cli compose --project-name tapyrus-faucet-nginx --file docker-compose-production2.yml service up --create-log-groups --cluster-config tapyrus --ecs-profile tapyrus-profile --target-group-arn arn:aws:elasticloadbalancing:ap-northeast-1:104420014930:targetgroup/tapyrus-faucet-assets/02ad31e020260624 --container-name nginx --container-port 80 --force-deployment
