@@ -23,7 +23,7 @@ jobs:
       - name: Build, tag, and push image to DockerHub
         id: build-app-image
         env:
-          DOCKER_HUB_APP_REPOSITORY: rantan39/tapyrus-faucet-app
+          DOCKER_HUB_APP_REPOSITORY: rantan39/tapyrus-faucet
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t dev-image .

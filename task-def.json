@@ -15,7 +15,7 @@
         }
       ],
       "command": [
-        "bash -c \"rm -f tmp/pids/server.pid && bundle exec pumactl start\""
+        "bundle exec pumactl start"
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
