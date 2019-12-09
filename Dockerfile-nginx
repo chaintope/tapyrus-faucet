@@ -1,16 +1,5 @@
-# Dockerfile for to build tapyrus-faucet web application runnning environment.
-FROM ruby:2.5 as build-env
-
-ENV LANG C.UTF-8
-ENV APP=/tapyrus-faucet
-
-RUN apt-get update && \
-    apt-get install -y build-essential libpq-dev libmariadb-dev nodejs
-RUN mkdir $APP
-WORKDIR $APP
-COPY . $APP
-RUN bundle install && \
-    bundle exec rails assets:precompile
+FROM dev-image as build-env
+RUN bundle exec rails assets:precompile
 
 FROM nginx:1.17
 COPY --from=build-env /tapyrus-faucet/public /usr/share/nginx/html

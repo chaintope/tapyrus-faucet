@@ -1,0 +1,139 @@
+{
+  "family": "tapyrus-faucet",
+  "networkMode": "bridge",
+  "executionRoleArn": "arn:aws:iam::104420014930:role/ecsTaskExecutionRole",
+  "volumes": [
+    {
+      "name" : "db",
+      "dockerVolumeConfiguration" : {
+        "scope": "shared",
+        "autoprovision": true,
+        "driver": "local"
+      }
+    }
+  ],
+  "containerDefinitions": [
+    {
+      "name": "tapyrus-faucet-app",
+      "image": "rantan39/tapyrus-faucet:master",
+      "dependsOn": [
+        {
+          "condition": "START",
+          "containerName": "db"
+        }
+      ],
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "hostPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "command": [
+        "bash -c \"rm -f tmp/pids/server.pid && bundle exec pumactl start\""
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "tapyrus-faucet",
+          "awslogs-region": "ap-northeast-1",
+          "awslogs-stream-prefix": "app"
+        }
+      },
+      "secrets": [
+        {
+          "name": "RECAPTCHA_SITE_KEY",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus-testnet-faucet-lYHz1j"
+        }, {
+          "name": "RECAPTCHA_SECRET_KEY",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus-testnet-faucet-lYHz1j"
+        }, {
+          "name": "TAPYRUS_RPC_USER",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus-testnet-faucet-lYHz1j"
+        }, {
+          "name": "TAPYRUS_RPC_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus-testnet-faucet-lYHz1j"
+        }, {
+          "name": "TAPYRUS_RPC_HOST",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus-testnet-faucet-lYHz1j"
+        }, {
+          "name": "TAPYRUS_RPC_PORT",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus-testnet-faucet-lYHz1j"
+        }, {
+          "name": "TAPYRUS_FAUCET_DATABASE_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus-testnet-faucet-lYHz1j"
+        }, {
+          "name": "SECRET_KEY_BASE",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus-testnet-faucet-lYHz1j"
+        }
+      ]
+    }, {
+      "name": "db",
+      "image": "mysql:8",
+      "essential": true,
+      "command": [
+        "--default-authentication-plugin=mysql_native_password"
+      ],
+      "portMappings": [
+        {
+          "containerPort": 3306,
+          "hostPort": 3306,
+          "protocol": "tcp"
+        }
+      ],
+      "mountPoints": [
+        {
+          "containerPath": "/var/lib/mysql",
+          "sourceVolume": "db"
+        }
+      ],
+      "environment": [
+        {
+          "name": "MYSQL_USER",
+          "value": "tapyrus_faucet"
+        },{
+          "name": "MYSQL_DATABASE",
+          "value": "tapyrus_faucet_production"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "tapyrus-faucet",
+          "awslogs-region": "ap-northeast-1",
+          "awslogs-stream-prefix": "db"
+        }
+      },
+      "secrets": [
+        {
+          "name": "MYSQL_ROOT_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus-testnet-faucet-lYHz1j"
+        },
+        {
+          "name": "MYSQL_PASSWORD",
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus-testnet-faucet-lYHz1j"
+        }
+      ]
+    }, {
+      "name": "tapyrus-faucet-nginx",
+      "image": "rantan39/tapyrus-faucet-nginx:master",
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "hostPort": 80,
+          "protocol": "tcp"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "tapyrus-faucet",
+          "awslogs-region": "ap-northeast-1",
+          "awslogs-stream-prefix": "nginx"
+        }
+      }
+    }
+  ],
+  "cpu": "256",
+  "memory": "512"
+}
