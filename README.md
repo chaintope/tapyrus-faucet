@@ -14,10 +14,10 @@ Things you may want to cover:
 
 # Configuration
 ## environment variables
-- TAPYRUS_RPC_FAUCET_USER
-- TAPYRUS_RPC_FAUCET_PASSWORD
-- TAPYRUS_HOST
-- TAPYRUS_PORT
+- TAPYRUS_RPC_USER
+- TAPYRUS_RPC_PASSWORD
+- TAPYRUS_RPC_HOST
+- TAPYRUS_RPC_PORT
 - RECAPTCHA_SITE_KEY
 - RECAPTCHA_SECRET_KEY
 - MYSQL_ROOT_PASSWORD (for development/test)
@@ -94,10 +94,10 @@ This is a sample of `.env`. You need to specify each environments.
 ```text
 RECAPTCHA_SITE_KEY=xxxx_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 RECAPTCHA_SECRET_KEY=xxxx_xxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxx
-TAPYRUS_RPC_FAUCET_USER=xxxxx
-TAPYRUS_RPC_FAUCET_PASSWORD=xxxxx
-TAPYRUS_HOST=xxxxx.xxxxx.xxxx
-TAPYRUS_PORT=xxxxx
+TAPYRUS_RPC_USER=xxxxx
+TAPYRUS_RPC_PASSWORD=xxxxx
+TAPYRUS_RPC_HOST=xxxxx.xxxxx.xxxx
+TAPYRUS_RPC_PORT=xxxxx
 ```
 
 You can get recapture keys from [here](https://www.google.com/recaptcha/intro/v3.html).
