@@ -36,24 +36,24 @@ class Transaction < ApplicationRecord
     self.date       = Time.zone.now.beginning_of_day
 
     if address.blank?
-      errors.add(:address, 'あなた様のアドレスが指定されておりません')
+      errors.add(:address, 'Input your address')
       raise
     end
 
     unless rpc_helper.rpc(:validateaddress, address)['isvalid']
-      errors.add(:address, 'アドレスに誤りがございます')
+      errors.add(:address, 'the address is something wrong.')
       raise
     end
 
     # typeとip_addressとdate
     if Transaction.find_by(type: type, ip_address: ip_address, date: date)
-      errors.add(:ip_address, '本日はご利用済です。明日のご利用を心よりお待ちいたしております。')
+      errors.add(:ip_address, 'You already got coins from here today. Try tomorrow please.')
       raise
     end
 
     # typeとaddressとdate
     if Transaction.find_by(type: type, address: address, date: date)
-      errors.add(:address, '本日はご利用済です。明日のご利用を心よりお待ちいたしております。')
+      errors.add(:address, 'You already got coins from here today. Try tomorrow please.')
       raise
     end
 
@@ -63,13 +63,13 @@ class Transaction < ApplicationRecord
 
     # 0.000226はsettxfeeに0.001を指定していたときにUTXOが1件のときの手数料になることが多い数字　これ以上ないとどうしようもない。
     unless rpc_helper.rpc(:getbalance) >= (value + 0.000226)
-      errors.add(:value, '申し訳ございません。力尽きましたでございまする。')
+      errors.add(:value, 'The balance of this faucet is disappeared. OMG!')
       raise
     end
 
     self.txid = rpc_helper.rpc(:sendtoaddress, address, value)
     if txid.blank?
-      errors.add(:txid, '申し訳ございません。送金できませんでした。手数料が不足しているようです。力尽きたでございまする。')
+      errors.add(:txid, 'The balance of this faucet is disappeared. OMG!')
       raise
     end
     save!

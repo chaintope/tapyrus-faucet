@@ -1,48 +1,69 @@
 <% @transaction = Tapyrus::Transaction.new unless @transaction %>
-<div class="header">
-  <h1>Tapyrus Faucet</h1>
-</div>
 
-<div class="row">
-  <aside class="col-md-3">
-    <section class="send_to_address_form">
-      <%= form_for(@transaction) do |f| %>
-        <%= render 'shared/error_messages' %>
-        <%= f.label :address %>
-        <%= f.text_field :address, class: 'form-control' %>
-        <p />
-        <p />
-        <p />
-        <%= invisible_recaptcha_tags text: 'Send', badge: 'inline', class: "btn btn-primary" %>
-      <% end %>
-      <p><a href="https://www.chaintope.com/chaintope-blockchain-protocol/" target="_blank">Tapyrus</a>を少量ではありますがさしあげます。</p>
-      <h4>このサイトの保有量</h4>
-      <h1><span class="text-gold"><%= @klass.balance %> Tapyrus</span></h1>
-    </section>
-  </aside>
-  <div class="col-md-9">
-    <% if @transactions.present? %>
-    <table class="table table-bordered table-striped">
-      <tr>
-        <th>txid</th>
-        <th>address</th>
-        <th>value</th>
-        <th>datetime</th>
-      </tr>
-      <% @transactions.each do |t| %>
-      <tr>
-        <td><%= t.txid %></td>
-        <td><%= t.address %></td>
-        <td align="right"><%= t.value %></td>
-        <td><%= t.created_at %></td>
-      </tr>
-      <% end %>
-    </table>
-    <div class="zaif-footer">
-      <%= will_paginate @transactions %>
-    </div>
-    <% else %>
-      <p>Not Found</p>
+<header class="page-header">
+  <h1>Tapyrus Testnet Faucet</h1>
+</header>
+
+<section>
+  <h2>About This Page</h2>
+  <p>
+    You can get Tapyrus Testnet coins right here. If you want to know more about Tapyrus, visit following links.
+  </p>
+  <ul>
+    <li><a href="https://www.chaintope.com/en/chaintope-blockchain-protocol/">Tapyrus overview</a></li>
+    <li><a href="https://github.com/chaintope/tapyrus-core">Github Repository</a></li>
+  </ul>
+</section>
+
+<section class="send_to_address_form">
+  <h2>Get Coins</h2>
+  <%= form_for(@transaction) do |f| %>
+    <%= render 'shared/error_messages' %>
+    <%= f.label "Input your address" %>
+    <%= f.text_field :address, class: 'form-control' %>
+    <%= invisible_recaptcha_tags text: 'Get coins!', badge: 'inline', class: "btn btn-primary" %>
+  <% end %>
+</section>
+
+<section>
+  <h2>Current Balance</h2>
+  <p><span class="balance"><%= @klass.balance %> coins</span></p>
+</section>
+
+<section>
+  <h2>Return Address</h2>
+  <p>
+    <span class="text-info"><%= @wallet_address %></span>
+  </p>
+
+  <p>
+    When you would finish to use coins, give it back to this adddress please.
+  </p>
+</section>
+
+<section>
+  <h2>Withdraw transactions</h2>
+  <% if @transactions.present? %>
+  <table class="table table-bordered table-striped">
+    <tr>
+      <th>txid</th>
+      <th>address</th>
+      <th>value</th>
+      <th>datetime</th>
+    </tr>
+    <% @transactions.each do |t| %>
+    <tr>
+      <td><%= t.txid %></td>
+      <td><%= t.address %></td>
+      <td align="right"><%= t.value %></td>
+      <td><%= t.created_at %></td>
+    </tr>
     <% end %>
+  </table>
+  <div class="zaif-footer">
+    <%= will_paginate @transactions %>
   </div>
-</div>
+  <% else %>
+    <p>Not Found</p>
+  <% end %>
+</section>

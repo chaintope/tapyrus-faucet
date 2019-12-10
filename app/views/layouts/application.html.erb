@@ -10,14 +10,16 @@
     <script src="https://js.stripe.com/v3"></script>
   </head>
 
-  <body>
-    <% flash.each do |message_type, message| %>
-      <%= content_tag(:div, message, class: "alert alert-#{message_type}") %>
-    <% end %>
+  <body class="test-center">
+    <div class="wrapper-container">
+      <% flash.each do |message_type, message| %>
+        <%= content_tag(:div, message, class: "alert alert-#{message_type}") %>
+      <% end %>
 
-    <div>
-      <%= yield %>
-      <%= render 'layouts/footer' %>
+      <div>
+        <%= yield %>
+        <%= render 'layouts/footer' %>
+      </div>
     </div>
     <%= debug(params) if Rails.env.development? %>
   </body>
