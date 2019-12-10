@@ -15,6 +15,7 @@
   "containerDefinitions": [
     {
       "name": "db",
+      "hostname": "db",
       "image": "mysql:8",
       "essential": true,
       "command": [

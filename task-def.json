@@ -14,9 +14,6 @@
           "protocol": "tcp"
         }
       ],
-      "command": [
-        "bundle exec pumactl start"
-      ],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
@@ -25,31 +22,43 @@
           "awslogs-stream-prefix": "app"
         }
       },
+      "environment": [
+        {
+          "name": "TAPYRUS_FAUCET_DATABASE_HOST",
+          "value": "tapyrus-db.cwpsbrlgqypl.ap-northeast-1.rds.amazonaws.com"
+        }, {
+          "name": "TAPYRUS_FAUCET_DATABASE_PORT",
+          "value": "3306"
+        }, {
+          "name": "RAILS_ENV",
+          "value": "production"
+        }
+      ],
       "secrets": [
         {
           "name": "RECAPTCHA_SITE_KEY",
-          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus-testnet-faucet-lYHz1j"
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus/testnet/faucet/RECAPTCHA_SITE_KEY2-FuM24F"
         }, {
           "name": "RECAPTCHA_SECRET_KEY",
-          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus-testnet-faucet-lYHz1j"
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus/testnet/faucet/RECAPTCHA_SECRET_KEY2-PbweB9"
         }, {
           "name": "TAPYRUS_RPC_USER",
-          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus-testnet-faucet-lYHz1j"
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus/testnet/faucet/TAPYRUS_RPC_USER2-T5uY2A"
         }, {
           "name": "TAPYRUS_RPC_PASSWORD",
-          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus-testnet-faucet-lYHz1j"
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus/testnet/faucet/TAPYRUS_RPC_PASSWORD2-kqBY4A"
         }, {
           "name": "TAPYRUS_RPC_HOST",
-          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus-testnet-faucet-lYHz1j"
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus/testnet/faucet/TAPYRUS_RPC_HOST2-OwqmAF"
         }, {
           "name": "TAPYRUS_RPC_PORT",
-          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus-testnet-faucet-lYHz1j"
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus/testnet/faucet/TAPYRUS_RPC_PORT2-y8jiCd"
         }, {
           "name": "TAPYRUS_FAUCET_DATABASE_PASSWORD",
-          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus-testnet-faucet-lYHz1j"
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus/testnet/faucet/TAPYRUS_FAUCET_DATABASE_PASSWORD2-zExu7i"
         }, {
           "name": "SECRET_KEY_BASE",
-          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus-testnet-faucet-lYHz1j"
+          "valueFrom": "arn:aws:secretsmanager:ap-northeast-1:104420014930:secret:tapyrus/testnet/faucet/SECRET_KEY_BASE2-SgowNj"
         }
       ]
     }, {
