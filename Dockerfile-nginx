@@ -1,0 +1,5 @@
+FROM dev-image as build-env
+RUN bundle exec rails assets:precompile
+
+FROM nginx:1.17
+COPY --from=build-env /tapyrus-faucet/public /usr/share/nginx/html

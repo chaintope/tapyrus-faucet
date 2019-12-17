@@ -1,10 +1,10 @@
 class Tapyrus::Transaction < Transaction
   def rpc_helper
     @rpc_helper ||= RpcHelper.new(
-                      ENV['TAPYRUS_RPC_FAUCET_USER'],
-                      ENV['TAPYRUS_RPC_FAUCET_PASSWORD'],
-                      ENV['TAPYRUS_HOST'],
-                      ENV['TAPYRUS_PORT'])
+                      ENV['TAPYRUS_RPC_USER'],
+                      ENV['TAPYRUS_RPC_PASSWORD'],
+                      ENV['TAPYRUS_RPC_HOST'],
+                      ENV['TAPYRUS_RPC_PORT'])
   end
 
   def calc_value
