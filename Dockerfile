@@ -1,5 +1,5 @@
 # Dockerfile for to build tapyrus-faucet web application runnning environment.
-FROM ruby:2.5
+FROM ruby:2.7
 
 ENV LANG C.UTF-8
 ENV APP=/tapyrus-faucet
@@ -9,7 +9,8 @@ RUN apt-get update && \
 RUN mkdir $APP
 WORKDIR $APP
 COPY . $APP
-RUN bundle install
+RUN  bundle update --bundler && \
+     bundle install
 
 COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
