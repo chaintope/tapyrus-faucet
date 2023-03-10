@@ -13,6 +13,7 @@ services:
       TAPYRUS_RPC_PORT: 12381
       TAPYRUS_RPC_USER: rpcuser
       TAPYRUS_RPC_PASSWORD: rpcpassword
+      RETURN_ADDRESS: setreturnaddress
 
       # Use recaptcha test key
       RECAPTCHA_SECRET_KEY: 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
