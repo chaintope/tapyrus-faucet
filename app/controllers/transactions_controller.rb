@@ -78,11 +78,8 @@ class TransactionsController < ApplicationController
 
   def index
     @klass = klass
-    @transactions = @klass.paginate(:page => params[:page])
     @transaction = @klass.new
     @wallet_address = @klass.wallet_address
-    # @donate_to = donate_to
-    # @footer_medi8_ad_url = footer_medi8_ad_url
     @title = title
     @favicon = favicon
   end
