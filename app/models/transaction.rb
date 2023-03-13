@@ -10,9 +10,7 @@ class Transaction < ApplicationRecord
 
   class << self
     def wallet_address
-      # Transactionを生で使うことはない
-      # 必ずTransaction::Xxx がnewされている
-      new.rpc_helper.rpc(:getnewaddress, '')
+      ENV['RETURN_ADDRESS']
     end
 
     def balance
