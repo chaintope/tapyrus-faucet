@@ -1,0 +1,62 @@
+name: Push API Image to ECR
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  build_rails_image:
+    if: ${{ github.repository == 'chaintope/tapyrus-faucet' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Prepare
+        id: prep
+        run: |
+          RAILS_DOCKER_IMAGE=tapyrus/faucet/rails
+          ASSETS_DOCKER_IMAGE=tapyrus/faucet/assets
+          TAG=${{github.ref_name}}
+          echo ::set-output name=tag::${TAG}
+          echo ::set-output name=rails_image::${RAILS_DOCKER_IMAGE}
+          echo ::set-output name=assets_image::${ASSETS_DOCKER_IMAGE}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ECR }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ECR }}
+          aws-region: ap-northeast-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build dev image
+        id: build-dev-image
+        run: |
+          docker build -t dev-image .
+
+      - name: Build rails image, tag, and push image to Amazon ECR
+        id: build-rails-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ steps.prep.outputs.rails_image }}
+          IMAGE_TAG: ${{ steps.prep.outputs.tag }}
+        run: |
+          docker build -f Dockerfile-production -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+      - name: Build assets image, tag, and push image to Amazon ECR
+        id: build-assets-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ steps.prep.outputs.assets_image }}
+          IMAGE_TAG: ${{ steps.prep.outputs.tag }}
+        run: |
+          docker build -f Dockerfile-nginx -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
