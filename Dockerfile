@@ -1,5 +1,5 @@
 # Dockerfile for to build tapyrus-faucet web application runnning environment.
-FROM ruby:2.7
+FROM ruby:3.0.5
 
 ENV LANG C.UTF-8
 ENV APP=/tapyrus-faucet
