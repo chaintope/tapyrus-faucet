@@ -49,7 +49,4 @@ test:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
 production:
-  <<: *default
   database: tapyrus_faucet_production
-  username: tapyrus_faucet
-  password: <%= ENV['TAPYRUS_FAUCET_DATABASE_PASSWORD'] %>
