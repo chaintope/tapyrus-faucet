@@ -1,0 +1,52 @@
+name: Upload SBOM
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Target branch to build (e.g. main or release/1.2)'
+        required: true
+        default: 'master'
+  push:
+    tags:
+      - v*
+    branches:
+      - master
+
+jobs:
+  upload_sbom:
+    name: Upload SBOM
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Set up
+        run: |
+          TAG=${{github.event.inputs.branch || github.ref_name}}
+          echo "TAG=${TAG}" >> $GITHUB_ENV
+
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin v0.62.1
+
+      - name: Generate SBOM
+        run: trivy fs Gemfile.lock --format cyclonedx --output bom.json
+
+      - name: Upload SBOM
+        uses: DependencyTrack/gh-upload-sbom@v3
+        with:
+          serverHostname: ${{ secrets.DEPENDENCYTRACK_SERVER }} # eg: exmample.com
+          apiKey: ${{ secrets.DEPENDENCYTRACK_APIKEY }}
+          project: ${{ secrets.DEPENDENCYTRACK_PROJECT }} # eg: 123e4567-e89b-12d3-a456-426614174000
+          # projectName: ${{ secrets.DEPENDENCYTRACK_PROJECTNAME }} # eg: MyProject
+          # projectVersion: ${{ env.TAG }}
+          # projectTags: 'tag1,tag2'
+          bomFilename: "bom.json"
+          autoCreate: false
+
+      - name: Clean up
+        run: |
+          rm -f bom.json
