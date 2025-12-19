@@ -10,21 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2018_05_03_004439) do
+ActiveRecord::Schema[8.1].define(version: 2018_05_03_004439) do
   create_table "transactions", charset: "utf8mb3", force: :cascade do |t|
-    t.string "txid", null: false
     t.string "address", null: false
-    t.string "ip_address", null: false
-    t.date "date", null: false
-    t.float "value", null: false
     t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.date "date", null: false
+    t.string "ip_address", null: false
+    t.string "txid", null: false
     t.string "type"
+    t.datetime "updated_at", precision: nil, null: false
+    t.float "value", null: false
     t.index ["created_at"], name: "index_transactions_on_created_at"
     t.index ["date"], name: "index_transactions_on_date"
     t.index ["type", "address", "date"], name: "index_transactions_on_type_and_address_and_date", unique: true
     t.index ["type", "ip_address", "date"], name: "index_transactions_on_type_and_ip_address_and_date", unique: true
     t.index ["type"], name: "index_transactions_on_type"
   end
-
 end
