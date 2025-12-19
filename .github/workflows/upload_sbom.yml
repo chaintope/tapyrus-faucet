@@ -15,6 +15,7 @@ on:
 
 jobs:
   upload_sbom:
+    if: ${{ github.repository == 'chaintope/tapyrus-faucet' }}
     name: Upload SBOM
     runs-on: ubuntu-latest
 
