@@ -3,15 +3,6 @@
 This README would normally document whatever steps are necessary to get the
 application up and running.
 
-Things you may want to cover:
-
-# Ruby version
-- 2.5.0
-
-# System dependencies
-- MySQL
-- bundler
-
 # Configuration
 ## environment variables
 - TAPYRUS_RPC_USER
@@ -105,29 +96,14 @@ You can get recapture keys from [here](https://www.google.com/recaptcha/intro/v3
 3. Create database and migrate it
 
 ```bash
-$ docker-compose up
-$ docker-compose run web rails db:create
-$ docker-compose run web rails db:migrate
+$ docker compose up
+$ docker compose run web rails db:create
+$ docker compose run web rails db:migrate
 ```
 
 4. Access `http://localhost:3000` from any browser 
 
 [http://localhost:3000](`http://localhost:3000`)
-
-# 復旧手段
-```
-[local]
-$ ssh -i ~/.ssh/time4vps -p 50417 sammy@yourhost
-
-[server]
-$ sudo su - tapyrus
-$ tapyrusd -daemon
-$ exit
-
-$ cd ~/tapyrus-faucet
-$ nohup bin/rails server -e production -p 3000 &
-```
-
 
 # Database initialization
 
@@ -135,18 +111,4 @@ $ nohup bin/rails server -e production -p 3000 &
 
 ```
 $ bin/rails test
-```
-
-# Services (job queues, cache servers, search engines, etc.)
-
-# Deployment instructions
-
-# いずれ書き足しておきたいこと
-- nginxの設定
-- sslのこと
-
-# 日別集計
-
-```
-mysql> SELECT DATE_FORMAT(date, '%Y-%m-%d') AS time, COUNT(*), SUM(value) AS SUM, SUM(value)/COUNT(*) AS AVE FROM `torifuku_faucet_production`.transactions GROUP BY date;
 ```
