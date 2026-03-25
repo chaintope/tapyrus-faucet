@@ -15,34 +15,11 @@ jobs:
   upload_sbom:
     if: ${{ github.repository == 'chaintope/tapyrus-faucet' }}
     name: Upload SBOM
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.branch }}
-
-      - name: Set up
-        run: |
-          TAG=${{github.event.inputs.branch || github.ref_name}}
-          echo "TAG=${TAG}" >> $GITHUB_ENV
-
-      - name: Generate SBOM
-        run: |
-          docker run --rm -v ${{ github.workspace }}:/workspace aquasec/trivy:latest fs /workspace/Gemfile.lock --format cyclonedx --output /workspace/bom.json
-
-      - name: Upload SBOM
-        uses: DependencyTrack/gh-upload-sbom@v3
-        with:
-          serverHostname: ${{ secrets.DEPENDENCYTRACK_SERVER }} # eg: exmample.com
-          apiKey: ${{ secrets.DEPENDENCYTRACK_APIKEY }}
-          project: ${{ secrets.DEPENDENCYTRACK_PROJECT }} # eg: 123e4567-e89b-12d3-a456-426614174000
-          # projectName: ${{ secrets.DEPENDENCYTRACK_PROJECTNAME }} # eg: MyProject
-          # projectVersion: ${{ env.TAG }}
-          # projectTags: 'tag1,tag2'
-          bomFilename: "bom.json"
-          autoCreate: false
-
-      - name: Clean up
-        run: |
-          rm -f bom.json
+    uses: chaintope/.github/.github/workflows/trivy-sbom.yml@main
+    with:
+      scan-target: "Gemfile.lock"
+      ref: ${{ github.event.inputs.branch || github.ref_name }}
+    secrets:
+      dependencytrack-server: ${{ secrets.DEPENDENCYTRACK_SERVER }}
+      dependencytrack-apikey: ${{ secrets.DEPENDENCYTRACK_APIKEY }}
+      dependencytrack-project: ${{ secrets.DEPENDENCYTRACK_PROJECT }}
