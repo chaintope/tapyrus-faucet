@@ -14,7 +14,6 @@ on:
 jobs:
   upload_sbom:
     if: ${{ github.repository == 'chaintope/tapyrus-faucet' }}
-    name: Upload SBOM
     uses: chaintope/.github/.github/workflows/trivy-sbom.yml@main
     with:
       scan-target: "Gemfile.lock"
