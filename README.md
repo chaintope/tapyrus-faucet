@@ -13,6 +13,10 @@ application up and running.
 - RECAPTCHA_SECRET_KEY
 - MYSQL_ROOT_PASSWORD (for development/test)
 - SECRET_KEY_BASE (for production)
+- RETURN_ADDRESS
+- DISTRIBUTION_RATE
+- FAUCET_DISABLE_IP_LIMIT (for development)
+  - Set `true` to accept repeated requests from the same client. Never set it in production.
 ```
 $ bin/rails secret
 ```
@@ -110,5 +114,6 @@ $ docker compose run web rails db:migrate
 # How to run the test suite
 
 ```
-$ bin/rails test
+$ docker compose run --rm web bin/rails db:create db:migrate RAILS_ENV=test
+$ docker compose run --rm web bin/rails test
 ```
