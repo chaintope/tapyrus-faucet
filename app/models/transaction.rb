@@ -1,4 +1,8 @@
 class Transaction < ApplicationRecord
+  # 配布できない理由が利用者の側にあるもの。画面にメッセージを出して終える。
+  # ノードの停止など運用者が知るべき失敗は、この例外にせずそのまま外へ出す。
+  class DistributionError < StandardError; end
+
   validates :type,       presence: true
   validates :address,    presence: true, :uniqueness => { :scope => [:type, :date] }
   validates :ip_address, presence: true, :uniqueness => { :scope => [:type, :date] }
@@ -34,12 +38,12 @@ class Transaction < ApplicationRecord
 
     if address.blank?
       errors.add(:address, 'Input your address')
-      raise
+      raise DistributionError
     end
 
     unless rpc_helper.rpc(:validateaddress, address)['isvalid']
       errors.add(:address, 'the address is something wrong.')
-      raise
+      raise DistributionError
     end
 
     set_txfee
@@ -54,7 +58,7 @@ class Transaction < ApplicationRecord
       # 0.000226はsettxfeeに0.001を指定していたときにUTXOが1件のときの手数料になることが多い数字　これ以上ないとどうしようもない。
       unless rpc_helper.rpc(:getbalance) >= (value + 0.000226)
         errors.add(:value, 'The balance of this faucet is disappeared. OMG!')
-        raise
+        raise DistributionError
       end
 
       # 応答が届かなくても送金が済んでいる可能性があるため、呼び出しの開始を記録する
@@ -62,7 +66,7 @@ class Transaction < ApplicationRecord
       self.txid = rpc_helper.rpc(:sendtoaddress, address, value)
       if txid.blank?
         errors.add(:txid, 'The balance of this faucet is disappeared. OMG!')
-        raise
+        raise DistributionError
       end
       save!
     rescue StandardError
@@ -79,7 +83,7 @@ class Transaction < ApplicationRecord
   # 並行するリクエストが同じ相手へ二重に送金することは無い。競合の裁定は
   # (type, address, date) と (type, ip_address, date) のユニークインデックスが行う。
   def claim!
-    raise if already_distributed?
+    raise DistributionError if already_distributed?
 
     begin
       save!
@@ -88,7 +92,7 @@ class Transaction < ApplicationRecord
       unless already_distributed?
         errors.add(:base, 'You already got coins from here today. Try tomorrow please.')
       end
-      raise
+      raise DistributionError
     end
   end
 
