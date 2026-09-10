@@ -66,6 +66,17 @@ class ActiveSupport::TestCase
     RpcHelper.stub
   end
 
+  # ブロックの実行中に Rails.logger へ書かれた内容を返す
+  def capture_rails_log
+    io = StringIO.new
+    original = Rails.logger
+    Rails.logger = ActiveSupport::Logger.new(io)
+    yield
+    io.string
+  ensure
+    Rails.logger = original
+  end
+
   # 環境変数をテストの間だけ差し替える
   def with_env(values)
     saved = values.keys.to_h { |key| [key, ENV[key]] }
