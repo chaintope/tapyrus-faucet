@@ -117,3 +117,61 @@ class TransactionTest < ActiveSupport::TestCase
     assert_equal 'b' * 64, Transaction.first.txid
   end
 end
+
+# 並行リクエストの検証はトランザクション外で行う。スレッドごとに別の接続を使うため、
+# テストを包むトランザクションの中では互いのレコードが見えない。
+class TransactionConcurrencyTest < ActiveSupport::TestCase
+  self.use_transactional_tests = false
+
+  ADDRESS = '1LxWufmUothBSe78DYESKcoP8ppmPcSHZ6'.freeze
+  IP = '203.0.113.9'.freeze
+
+  setup { Transaction.delete_all }
+  teardown { Transaction.delete_all }
+
+  def build_transaction
+    Tapyrus::Transaction.new(address: ADDRESS, ip_address: IP)
+  end
+
+  test '事前チェックが空振りしてもレコードを確保できるのは1件だけである' do
+    build_transaction.send!
+
+    second = build_transaction
+    # 並行するリクエストが同時に事前チェックを通過した状態を作る
+    def second.already_distributed?
+      false
+    end
+
+    assert_raises(StandardError) { second.send! }
+
+    assert_equal 1, Transaction.count
+    assert_equal 1, rpc_stub.count(:sendtoaddress)
+  end
+
+  test '同じ相手から同時に要求しても送金は1回だけである' do
+    # 確保してから送金するまでの間を広げ、競合が起きやすい状態にする
+    rpc_stub.before_sendtoaddress = ->(*) { sleep 0.2 }
+
+    gate = Queue.new
+    threads = 4.times.map do
+      Thread.new do
+        gate.pop
+        ActiveRecord::Base.connection_pool.with_connection do
+          begin
+            build_transaction.send!
+            :ok
+          rescue StandardError
+            :ng
+          end
+        end
+      end
+    end
+    4.times { gate << :go }
+    results = threads.map(&:value)
+
+    assert_equal 1, results.count(:ok)
+    assert_equal 1, Transaction.count
+    assert_equal 1, rpc_stub.count(:sendtoaddress)
+    assert_not_nil Transaction.first.txid
+  end
+end
