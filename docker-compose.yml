@@ -13,6 +13,8 @@ services:
       TAPYRUS_RPC_PASSWORD: rpcpassword
       RETURN_ADDRESS: setreturnaddress
       DISTRIBUTION_RATE: 5e-06
+      # 同じ相手から何度でも受け取れるようにする。開発時のみ有効にする
+      FAUCET_DISABLE_IP_LIMIT: 'true'
 
       # Use recaptcha test key
       RECAPTCHA_SECRET_KEY: 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe

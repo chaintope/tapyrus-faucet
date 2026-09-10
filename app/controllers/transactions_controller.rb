@@ -87,14 +87,14 @@ class TransactionsController < ApplicationController
   def create
     @klass = klass
     @transaction = @klass.new(transaction_params)
-    @transaction.ip_address = Rails.env.production? ? ip_address : Time.now.to_s
+    @transaction.ip_address = ip_address
     if @transaction.address == 'k1D2ZEuiWyfyyrZYuK5w8UjsmkZTyTn2hVo'
       # スパム野郎が攻撃に成功したとおもわせる
       flash[:info] = 'Please check your wallet!'
       redirect_to index_path
       return
     end
-    if BLACK_LIST.include?(@transaction.ip_address)
+    if BLACK_LIST.include?(request.remote_ip)
       # スパム野郎が攻撃に成功したとおもわせる
       flash[:info] = 'Please check your wallet!'
       redirect_to index_path
@@ -125,14 +125,13 @@ class TransactionsController < ApplicationController
       params.require(parameters_key).permit(:address)
     end
 
+    # X-Forwarded-For の先頭はクライアントが自由に設定できる値である。前段のロードバランサが
+    # 追記する右端の値を採る request.remote_ip を使い、申告値を信用しない。
     def ip_address
-      remoteaddr = 'unknown'
-      if request.env['HTTP_X_FORWARDED_FOR']
-        remoteaddr = request.env['HTTP_X_FORWARDED_FOR'].split(",").first
-      else
-        remoteaddr = request.env['REMOTE_ADDR'] if request.env['REMOTE_ADDR']
-      end
+      ip = request.remote_ip
+      return ip unless ENV['FAUCET_DISABLE_IP_LIMIT'] == 'true'
 
-      remoteaddr
+      # 同じ相手からでも毎回別の値にして、開発中に1日1回の制限へ当たらないようにする
+      "#{ip}/#{SecureRandom.hex(4)}"
     end
 end
