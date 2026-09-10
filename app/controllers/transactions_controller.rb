@@ -103,13 +103,14 @@ class TransactionsController < ApplicationController
 
     if !verify_recaptcha(model: @transaction)
       flash[:info] = 'robot!'
-      raise
+      raise Transaction::DistributionError, 'recaptcha verification failed'
     end
 
     @transaction.send!
     flash[:info] = 'Please check your wallet!'
     redirect_to index_path
-  rescue => e
+  rescue Transaction::DistributionError => e
+    Rails.logger.info("coins were not distributed: #{distribution_error_reason(e)}")
     @klass = klass
     @transactions = @klass.paginate(:page => params[:page])
     @wallet_address = @klass.wallet_address
@@ -118,11 +119,23 @@ class TransactionsController < ApplicationController
     @title = title
     @favicon = favicon
     render :index
+  rescue StandardError => e
+    # ノードの停止や設定の誤りなど、利用者では直せない失敗である。握りつぶすと
+    # 運用者が気付けないため、記録したうえで Rails の500処理へ渡す。
+    Rails.logger.error("failed to distribute coins: #{e.class}: #{e.message}")
+    Rails.logger.error(e.backtrace.join("\n")) if e.backtrace
+    raise
   end
 
   private
     def transaction_params
       params.require(parameters_key).permit(:address)
+    end
+
+    # 画面に出す理由をそのままログにも残す。理由が積まれていない場合は例外の内容を使う。
+    def distribution_error_reason(error)
+      messages = @transaction.errors.full_messages
+      messages.empty? ? error.message : messages.join(', ')
     end
 
     # X-Forwarded-For の先頭はクライアントが自由に設定できる値である。前段のロードバランサが
