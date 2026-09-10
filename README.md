@@ -110,5 +110,6 @@ $ docker compose run web rails db:migrate
 # How to run the test suite
 
 ```
-$ bin/rails test
+$ docker compose run --rm web bin/rails db:create db:migrate RAILS_ENV=test
+$ docker compose run --rm web bin/rails test
 ```
