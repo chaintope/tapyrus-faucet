@@ -48,6 +48,8 @@ class Transaction < ApplicationRecord
 
     claim!
 
+    sending_started = false
+
     begin
       # 0.000226はsettxfeeに0.001を指定していたときにUTXOが1件のときの手数料になることが多い数字　これ以上ないとどうしようもない。
       unless rpc_helper.rpc(:getbalance) >= (value + 0.000226)
@@ -55,6 +57,8 @@ class Transaction < ApplicationRecord
         raise
       end
 
+      # 応答が届かなくても送金が済んでいる可能性があるため、呼び出しの開始を記録する
+      sending_started = true
       self.txid = rpc_helper.rpc(:sendtoaddress, address, value)
       if txid.blank?
         errors.add(:txid, 'The balance of this faucet is disappeared. OMG!')
@@ -62,9 +66,9 @@ class Transaction < ApplicationRecord
       end
       save!
     rescue StandardError
-      # 送金前に失敗した場合だけ確保を解く。送金後に失敗したときレコードを消すと、
-      # 出ていったコインの記録が残らず、同じ相手がその日にもう一度受け取れてしまう。
-      destroy if txid.blank?
+      # 送金を始める前に失敗した場合だけ確保を解く。送金の結果が分からないままレコードを
+      # 消すと、出ていったコインの記録が残らず、同じ相手がその日にもう一度受け取れてしまう。
+      destroy unless sending_started
       raise
     end
   end
