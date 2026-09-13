@@ -111,14 +111,11 @@ class TransactionsController < ApplicationController
     redirect_to index_path
   rescue Transaction::DistributionError => e
     Rails.logger.info("coins were not distributed: #{distribution_error_reason(e)}")
-    @klass = klass
-    @transactions = @klass.paginate(:page => params[:page])
-    @wallet_address = @klass.wallet_address
-    # @donate_to = donate_to
-    # @footer_medi8_ad_url = footer_medi8_ad_url
-    @title = title
-    @favicon = favicon
-    render :index
+    render_index
+  rescue ActionController::ParameterMissing => e
+    # フォームを通さない POST で起きる。利用者側の不備であり、運用者が対処する失敗ではない。
+    Rails.logger.info("coins were not distributed: #{e.message}")
+    render_index
   rescue StandardError => e
     # ノードの停止や設定の誤りなど、利用者では直せない失敗である。握りつぶすと
     # 運用者が気付けないため、記録したうえで Rails の500処理へ渡す。
@@ -130,6 +127,18 @@ class TransactionsController < ApplicationController
   private
     def transaction_params
       params.require(parameters_key).permit(:address)
+    end
+
+    # 配布できなかったときはフォームへ戻す。理由は @transaction の errors が持つ。
+    def render_index
+      @klass = klass
+      @transactions = @klass.paginate(:page => params[:page])
+      @wallet_address = @klass.wallet_address
+      # @donate_to = donate_to
+      # @footer_medi8_ad_url = footer_medi8_ad_url
+      @title = title
+      @favicon = favicon
+      render :index
     end
 
     # 画面に出す理由をそのままログにも残す。理由が積まれていない場合は例外の内容を使う。

@@ -69,7 +69,32 @@ class Tapyrus::TransactionsControllerTest < ActionDispatch::IntegrationTest
 
     assert_raises(Errno::ECONNREFUSED) { post_create }
 
+    # 送金の結果が分からないため、確保したレコードは残る
+    assert_equal 1, Transaction.count
+    assert_nil Transaction.first.txid
+  end
+
+  test 'ノードが返したエラーは運用者向けに記録して外へ出す' do
+    rpc_stub.before_sendtoaddress = ->(*) { raise RpcHelper::RpcError, 'sendtoaddress failed: wallet locked' }
+
+    log = capture_rails_log do
+      assert_raises(RpcHelper::RpcError) { post_create }
+    end
+
+    assert_match 'failed to distribute coins', log
+    assert_match 'wallet locked', log
+  end
+
+  test 'パラメータの欠けた POST は運用者向けのエラーにしない' do
+    log = capture_rails_log do
+      post tapyrus_transactions_path,
+           headers: { 'REMOTE_ADDR' => LB_ADDR, 'HTTP_X_FORWARDED_FOR' => CLIENT_IP }
+    end
+
+    assert_response :success
     assert_equal 0, Transaction.count
+    refute_match 'failed to distribute coins', log
+    assert_match 'coins were not distributed', log
   end
 
   test '想定外の例外は原因がログに残る' do

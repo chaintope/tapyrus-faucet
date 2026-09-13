@@ -65,8 +65,9 @@ class Transaction < ApplicationRecord
       sending_started = true
       self.txid = rpc_helper.rpc(:sendtoaddress, address, value)
       if txid.blank?
-        errors.add(:txid, 'The balance of this faucet is disappeared. OMG!')
-        raise DistributionError
+        # ノードがエラーも txid も返さない状態である。利用者では直せないため、
+        # 画面にメッセージを出して終える DistributionError にはしない。
+        raise RpcHelper::RpcError, 'sendtoaddress returned no txid'
       end
       save!
     rescue StandardError
