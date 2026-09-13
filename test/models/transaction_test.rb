@@ -97,24 +97,50 @@ class TransactionTest < ActiveSupport::TestCase
     assert_equal 0, rpc_stub.count(:sendtoaddress)
   end
 
-  test '送金が txid を返さなければレコードは残らない' do
+  test '送金が txid を返さなければ確保したレコードは残る' do
     rpc_stub.txid = ''
     transaction = build_transaction
 
     assert_raises(StandardError) { transaction.send! }
 
-    assert_equal 0, Transaction.count
+    assert_equal 1, Transaction.count
+    assert_nil Transaction.first.txid
   end
 
-  test '送金に失敗した相手は同じ日に再試行できる' do
-    rpc_stub.txid = ''
-    assert_raises(StandardError) { build_transaction.send! }
+  test '送金の呼び出し中に失敗しても確保したレコードは残る' do
+    rpc_stub.before_sendtoaddress = ->(*) { raise Errno::ECONNREFUSED }
 
+    assert_raises(Errno::ECONNREFUSED) { build_transaction.send! }
+
+    assert_equal 1, Transaction.count
+    assert_nil Transaction.first.txid
+  end
+
+  test '送金を始める前に失敗した相手は同じ日に再試行できる' do
+    rpc_stub.balance = 0.0001
+    assert_raises(StandardError) { build_transaction.send! }
+    assert_equal 0, Transaction.count
+
+    rpc_stub.balance = RpcStub::DEFAULT_BALANCE
     rpc_stub.txid = 'b' * 64
     build_transaction.send!
 
     assert_equal 1, Transaction.count
     assert_equal 'b' * 64, Transaction.first.txid
+  end
+
+  test '送金を始めたあとに失敗した相手は同じ日に再試行できない' do
+    rpc_stub.txid = ''
+    assert_raises(StandardError) { build_transaction.send! }
+
+    rpc_stub.txid = 'b' * 64
+    second = build_transaction
+    assert_raises(StandardError) { second.send! }
+
+    assert_equal 1, Transaction.count
+    assert_nil Transaction.first.txid
+    assert_equal 1, rpc_stub.count(:sendtoaddress)
+    assert_includes second.errors.full_messages.join(' '), 'already got coins'
   end
 end
 
@@ -137,15 +163,21 @@ class TransactionConcurrencyTest < ActiveSupport::TestCase
     build_transaction.send!
 
     second = build_transaction
-    # 並行するリクエストが同時に事前チェックを通過した状態を作る
+    # 並行するリクエストが同時に事前チェックとバリデーションの SELECT を通過した状態を作る。
+    # ここまで来た2件目を退けられるのは DB のユニークインデックスだけである。
     def second.already_distributed?
       false
+    end
+
+    def second.perform_validations(_options = {})
+      true
     end
 
     assert_raises(StandardError) { second.send! }
 
     assert_equal 1, Transaction.count
     assert_equal 1, rpc_stub.count(:sendtoaddress)
+    assert_includes second.errors.full_messages.join(' '), 'already got coins'
   end
 
   test '同じ相手から同時に要求しても送金は1回だけである' do
