@@ -101,7 +101,8 @@ class TransactionTest < ActiveSupport::TestCase
     rpc_stub.txid = ''
     transaction = build_transaction
 
-    assert_raises(StandardError) { transaction.send! }
+    # 利用者向けの失敗ではないため DistributionError にはならない
+    assert_raises(RpcHelper::RpcError) { transaction.send! }
 
     assert_equal 1, Transaction.count
     assert_nil Transaction.first.txid
