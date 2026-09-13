@@ -9,11 +9,13 @@ class Tapyrus::TransactionsControllerTest < ActionDispatch::IntegrationTest
 
   # ロードバランサは X-Forwarded-For の右端にクライアントの IP を追記する。
   # spoofed はクライアントが自分で付けてきた値である。
-  def post_create(address: ADDRESS, client_ip: CLIENT_IP, spoofed: nil)
+  def post_create(address: ADDRESS, client_ip: CLIENT_IP, spoofed: nil, spoofed_client_ip: nil)
     forwarded_for = [spoofed, client_ip].compact.join(', ')
+    headers = { 'REMOTE_ADDR' => LB_ADDR, 'HTTP_X_FORWARDED_FOR' => forwarded_for }
+    headers['HTTP_CLIENT_IP'] = spoofed_client_ip if spoofed_client_ip
     post tapyrus_transactions_path,
          params: { tapyrus_transaction: { address: address } },
-         headers: { 'REMOTE_ADDR' => LB_ADDR, 'HTTP_X_FORWARDED_FOR' => forwarded_for }
+         headers: headers
   end
 
   test '記録される IP はロードバランサが追記した実クライアントの IP である' do
@@ -40,6 +42,19 @@ class Tapyrus::TransactionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 0, Transaction.count
     assert_equal 0, rpc_stub.count(:sendtoaddress)
     assert_redirected_to tapyrus_transactions_path
+  end
+
+  test 'Client-IP を偽装しても1日1回の制限を回避できない' do
+    post_create(spoofed_client_ip: '1.2.3.4')
+
+    assert_equal 1, Transaction.count
+    assert_equal CLIENT_IP, Transaction.first.ip_address
+
+    post_create(address: 'another-address', spoofed_client_ip: '5.6.7.8')
+
+    assert_equal 1, Transaction.count
+    assert_equal 1, rpc_stub.count(:sendtoaddress)
+    assert_response :success
   end
 
   test 'ブラックリストに載っていない相手は受け取れる' do

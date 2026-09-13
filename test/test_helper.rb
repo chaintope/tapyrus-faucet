@@ -62,6 +62,17 @@ class ActiveSupport::TestCase
     RpcHelper.stub = RpcStub.new
   end
 
+  # docker-compose.yml が web サービスへ設定する FAUCET_DISABLE_IP_LIMIT は
+  # `docker compose run --rm web bin/rails test` にも引き継がれる。IP を記録する処理の
+  # テストが手元だけ失敗するため、テストの間は外す。
+  setup do
+    @saved_disable_ip_limit = ENV.delete('FAUCET_DISABLE_IP_LIMIT')
+  end
+
+  teardown do
+    ENV['FAUCET_DISABLE_IP_LIMIT'] = @saved_disable_ip_limit unless @saved_disable_ip_limit.nil?
+  end
+
   def rpc_stub
     RpcHelper.stub
   end
