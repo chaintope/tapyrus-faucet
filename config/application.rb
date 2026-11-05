@@ -1,10 +1,17 @@
 require_relative 'boot'
 
-require 'rails/all'
+require 'rails'
+require 'active_model/railtie'
+require 'active_record/railtie'
+require 'action_controller/railtie'
+require 'action_view/railtie'
+require 'rails/test_unit/railtie'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
+
+require_relative '../lib/strip_client_forwarding_headers'
 
 module TapyrusFaucet
   class Application < Rails::Application
@@ -23,5 +30,8 @@ module TapyrusFaucet
     # 食い違いを偽装として扱う必要が無い。例外にすると、Rails::Rack::Logger が remote_ip を
     # 読む時点で 500 になり、コントローラでは何も返せなくなる。
     config.action_dispatch.ip_spoofing_check = false
+
+    # remote_ip や host を決めるミドルウェアより前に、利用者が付けた転送ヘッダを削除する
+    config.middleware.insert_before 0, StripClientForwardingHeaders
   end
 end

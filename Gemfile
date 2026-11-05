@@ -1,7 +1,13 @@
 source 'https://rubygems.org'
 
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 8.1.0'
+# config/application.rb で読み込むフレームワークだけを依存にする。使わないフレームワークの gem を
+# インストールしないためである。更新は次のようにまとめて行う。
+#   bundle update railties activemodel activerecord actionpack actionview --conservative
+gem 'railties', '~> 8.1.0'
+gem 'activemodel', '~> 8.1.0'
+gem 'activerecord', '~> 8.1.0'
+gem 'actionpack', '~> 8.1.0'
+gem 'actionview', '~> 8.1.0'
 # Use mysql as the database for Active Record
 gem 'mysql2', '~> 0.5.0'
 # Use Puma as the app server
@@ -14,9 +20,6 @@ gem 'turbo-rails'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder'
-
-# Use Redis adapter to run Action Cable in production
-# gem 'redis', '~> 4.0'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
