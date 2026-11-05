@@ -176,7 +176,7 @@ GEM
     reline (0.6.3)
       io-console (~> 0.5)
     rexml (3.4.4)
-    rubyzip (3.2.2)
+    rubyzip (3.4.0)
     sassc (2.4.0)
       ffi (~> 1.9)
     sassc-rails (2.1.2)
