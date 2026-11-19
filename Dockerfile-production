@@ -1,6 +1,8 @@
 FROM dev-image
 WORKDIR /tapyrus-faucet
-RUN bundle exec rails assets:precompile
+# production の設定（js_compressor など）で圧縮する。secret_key_base は precompile では使わないのでダミーにする。
+# どちらも RUN の中だけで渡し、イメージの環境変数には残さない。
+RUN RAILS_ENV=production SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile
 
 ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 3000
