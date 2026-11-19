@@ -18,8 +18,8 @@ jobs:
         run: |
           RAILS_DOCKER_IMAGE=tapyrus/faucet/rails
           TAG=${{github.ref_name}}
-          echo ::set-output name=tag::${TAG}
-          echo ::set-output name=rails_image::${RAILS_DOCKER_IMAGE}
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "rails_image=${RAILS_DOCKER_IMAGE}" >> "$GITHUB_OUTPUT"
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -62,7 +62,6 @@ jobs:
           aws s3 sync ./public-assets "s3://$ASSETS_BUCKET/assets" \
             --exclude ".sprockets-manifest-*" \
             --exclude "*.gz" \
-            --size-only \
             --cache-control "public, max-age=31536000, immutable"
 
       - name: Push rails image to Amazon ECR
