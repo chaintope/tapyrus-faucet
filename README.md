@@ -31,6 +31,7 @@ $ bin/rails db:migrate
 ## production
 - TAPYRUS_FAUCET_DATABASE_PASSWORD
 - RAILS_SERVE_STATIC_FILES=1
+- ASSET_HOST（任意。assets を別のホストから配るときに、https:// から始まるホスト名を渡す）
 
 ```
 $ mysql -uroot -p
