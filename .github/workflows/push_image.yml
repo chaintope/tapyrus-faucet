@@ -17,11 +17,9 @@ jobs:
         id: prep
         run: |
           RAILS_DOCKER_IMAGE=tapyrus/faucet/rails
-          ASSETS_DOCKER_IMAGE=tapyrus/faucet/assets
           TAG=${{github.ref_name}}
-          echo ::set-output name=tag::${TAG}
-          echo ::set-output name=rails_image::${RAILS_DOCKER_IMAGE}
-          echo ::set-output name=assets_image::${ASSETS_DOCKER_IMAGE}
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "rails_image=${RAILS_DOCKER_IMAGE}" >> "$GITHUB_OUTPUT"
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -39,7 +37,7 @@ jobs:
         run: |
           docker build -t dev-image .
 
-      - name: Build rails image, tag, and push image to Amazon ECR
+      - name: Build rails image
         id: build-rails-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -47,16 +45,28 @@ jobs:
           IMAGE_TAG: ${{ steps.prep.outputs.tag }}
         run: |
           docker build -f Dockerfile-production -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> "$GITHUB_OUTPUT"
 
-      - name: Build assets image, tag, and push image to Amazon ECR
-        id: build-assets-image
+      # 画面が参照する assets は、testnet-infra の CloudFront が S3 から配る。
+      # HTML が参照する digest 付きのファイル名と一致させるため、ビルドした rails のイメージから取り出す。
+      # タスクの入れ替えの最中は古い HTML が古いファイルを参照するので、--delete を付けない。
+      # ECR にイメージがあれば S3 にも assets がある状態を保つため、イメージの push より先に行う。
+      - name: Upload assets to S3
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ steps.prep.outputs.assets_image }}
-          IMAGE_TAG: ${{ steps.prep.outputs.tag }}
+          IMAGE: ${{ steps.build-rails-image.outputs.image }}
+          ASSETS_BUCKET: ${{ vars.FAUCET_ASSETS_BUCKET }}
         run: |
-          docker build -f Dockerfile-nginx -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          : "${ASSETS_BUCKET:?Set the repository variable FAUCET_ASSETS_BUCKET}"
+          container_id=$(docker create "$IMAGE")
+          docker cp "$container_id:/tapyrus-faucet/public/assets" ./public-assets
+          docker rm "$container_id"
+          aws s3 sync ./public-assets "s3://$ASSETS_BUCKET/assets" \
+            --exclude ".sprockets-manifest-*" \
+            --exclude "*.gz" \
+            --cache-control "public, max-age=31536000, immutable"
+
+      - name: Push rails image to Amazon ECR
+        env:
+          IMAGE: ${{ steps.build-rails-image.outputs.image }}
+        run: |
+          docker push "$IMAGE"
