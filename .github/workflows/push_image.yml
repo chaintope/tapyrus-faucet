@@ -54,8 +54,9 @@ jobs:
       - name: Upload assets to S3
         env:
           IMAGE: ${{ steps.build-rails-image.outputs.image }}
-          ASSETS_BUCKET: tapyrus-services-testnet-faucet-assets
+          ASSETS_BUCKET: ${{ vars.FAUCET_ASSETS_BUCKET }}
         run: |
+          : "${ASSETS_BUCKET:?Set the repository variable FAUCET_ASSETS_BUCKET}"
           container_id=$(docker create "$IMAGE")
           docker cp "$container_id:/tapyrus-faucet/public/assets" ./public-assets
           docker rm "$container_id"

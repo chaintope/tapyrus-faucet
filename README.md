@@ -21,6 +21,10 @@ application up and running.
 $ bin/rails secret
 ```
 
+## GitHub Actions variables
+- FAUCET_ASSETS_BUCKET
+  - S3 bucket that `.github/workflows/push_image.yml` uploads `public/assets` to when a `v*` tag is pushed. The workflow fails without it, before pushing the rails image.
+
 # Database creation
 ## development/test
 ```
